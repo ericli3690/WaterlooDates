@@ -9,7 +9,7 @@ export default function Navbar() {
     const navLinks = [
         { href: '/dashboard', label: 'Dashboard' },
         { href: '/rizzume', label: 'Rizzumé' },
-        { href: '/settings', label: 'Settings' },
+        { href: '/wingman', label: 'Wingman' },
     ];
 
     if (pathname === '/') {

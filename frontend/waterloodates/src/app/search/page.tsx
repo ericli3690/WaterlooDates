@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import path from "path";
@@ -13,7 +14,7 @@ export default withPageAuthRequired(function SearchPage({ user }) {
     const [postings, setPostings] = useState<Posting[]>([]);
 
     useEffect(() => {
-        fetch(path.join(process.env.NEXT_PUBLIC_API_URL as string, "get_postings"), {
+        fetch(path.join(process.env.NEXT_PUBLIC_API_URL as string, "get_all_rizzumes"), {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

@@ -23,35 +23,26 @@ interface UserData {
 }
 
 export default withPageAuthRequired(function DashboardPage({ user }) {
-  const [userData, setUserData] = useState<UserData | null>({
-    name: 'andrew',
-    email: 'andrew@example.com',
-    rizzumeCreated: true,
-    wingmanCreated: true,
-  });
-  const [outgoingApplications, setOutgoingApplications] = useState<Application[]>([{ applicantId: '1', recipientId: '2', applicantName: 'Andrew', recipientName: 'Bob', status: 'pending', createdAt: '2023-01-01', applicationId: 'app1' }]);
-  const [incomingApplications, setIncomingApplications] = useState<Application[]>([{ applicantId: '2', recipientId: '1', applicantName: 'Bob', recipientName: 'Andrew', status: 'accepted', createdAt: '2023-01-02', applicationId: 'app2' }]);
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [outgoingApplications, setOutgoingApplications] = useState<Application[]>([]);
+  const [incomingApplications, setIncomingApplications] = useState<Application[]>([]);
   const [activeTab, setActiveTab] = useState<'outgoing' | 'incoming'>('outgoing');
 
   useEffect(() => {
     if (user) {
       fetch(path.join(process.env.NEXT_PUBLIC_API_URL as string, "create_or_get_user"), {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(user),
       })
         .then((res) => res.json())
         .then((data) => {
           setUserData(data);
-
           if (data.rizzumeCreated) {
             fetch(`${process.env.NEXT_PUBLIC_API_URL}/applications/outgoing`)
               .then((res) => res.json())
               .then(setOutgoingApplications)
               .catch(console.error);
-
             if (data.wingmanCreated) {
               fetch(`${process.env.NEXT_PUBLIC_API_URL}/applications/incoming`)
                 .then((res) => res.json())
@@ -67,9 +58,22 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
   return (
     <div className="max-w-5xl mx-auto p-8 text-white">
       <div className="bg-white text-black border border-yellow-400 p-6 rounded-2xl shadow-xl">
-        <h1 className="text-4xl font-bold mb-6 text-[#ff76e8]">
-          Welcome, {user?.name || 'User'}!
-        </h1>
+        {/* Header row with welcome and button */}
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-4xl font-bold text-[#ff76e8]">
+            Welcome, {user?.name || 'User'}!
+          </h1>
+          <a
+            href="/search"
+            className="relative inline-flex items-center gap-2 bg-[#ff76e8] hover:bg-pink-400 text-black font-semibold py-2 px-4 rounded-xl shadow-lg transition duration-300 group"
+          >
+            <span className="animate-pulse">💖</span>
+            <span className="relative z-10">Find your soulmate</span>
+            <span className="inline-block transform transition-transform duration-300 group-hover:translate-x-1">
+              →
+            </span>
+          </a>
+        </div>
 
         {user?.picture && (
           <img
@@ -145,7 +149,6 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
             )}
           </div>
         )}
-
       </div>
     </div>
   );
