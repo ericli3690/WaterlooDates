@@ -1,0 +1,23 @@
+{
+    "user_id": "123",
+    "profile": {
+        "name": {
+            "first": "John",
+            "middle": "Middle",
+            "last": "Doe"
+        },
+        "age": 20,
+        "sexuality": "straight",
+        "gender": "male"
+    },
+    "job": {
+        "term": "3A",
+        "current_coop": "Citadel"
+    },
+    "fun_stuff": {
+        "blurb": "I'm a student at Waterloo and I'm looking for a date",
+        "hobbies": ["coding", "reading", "traveling"],
+        "pets": ["dog", "cat"],
+        "fun_fact": "I'm a student at Waterloo and I'm looking for a date"
+    }
+}

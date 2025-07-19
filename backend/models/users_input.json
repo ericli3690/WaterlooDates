@@ -1,0 +1,8 @@
+{
+    "user_id": "123",
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "email_verified": true,
+    "nickname": "john_doe",
+    "picture": "https://example.com/picture.jpg"
+}
