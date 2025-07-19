@@ -35,8 +35,10 @@ export function useCloudinary() {
       const result = await api('/api/cloudinary/upload', { method: 'POST', body: form })
       setMessage(`✅ Uploaded: ${result.public_id}`)
       loadImages()
+      return result
     } catch (error) {
       setMessage(`❌ Upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw error
     }
   }
 

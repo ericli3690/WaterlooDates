@@ -1,9 +1,26 @@
 'use client'
 
 import { useState } from 'react'
+import { useCloudinary } from '@/hooks/useCloudinary'
 
 export default function JobApplicationForm() {
   const [formData, setFormData] = useState<any>(null)
+  const [uploadedImageId, setUploadedImageId] = useState<string>('')
+  const [imageUrl, setImageUrl] = useState<string>('')
+  const { handleUpload, loading } = useCloudinary()
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    
+    try {
+      const result = await handleUpload(file)
+      setUploadedImageId(result.public_id)
+      setImageUrl(result.secure_url)
+    } catch (error) {
+      console.error('Image upload failed:', error)
+    }
+  }
 
   const handleSubmit = (e: any) => {
     e.preventDefault()
@@ -21,7 +38,8 @@ export default function JobApplicationForm() {
             },
             age: rawData.age ? parseInt(rawData.age as string) : null,
             sexuality: rawData.sexuality || '',
-            gender: rawData.gender || ''
+            gender: rawData.gender || '',
+            image_id: uploadedImageId || ''
         },
         job: {
             workterm: rawData.workterm ? parseInt(rawData.workterm as string) : null,
@@ -126,6 +144,31 @@ export default function JobApplicationForm() {
                     <option value="queer">Queer</option>
                   </select>
                 </div>
+              </div>
+            </div>
+
+            {/* Profile Image Upload */}
+            <div className="flex items-start gap-4">
+              <label className="font-semibold min-w-fit pt-2">PROFILE IMAGE:</label>
+              <div className="flex-1">
+                <input
+                  type="file"
+                  onChange={handleImageUpload}
+                  accept="image/*"
+                  className="w-full text-sm file:mr-4 file:py-1 file:px-2 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 mb-2"
+                />
+                {loading && <span className="text-sm text-blue-600">Uploading...</span>}
+                {uploadedImageId && <span className="text-sm text-green-600">✅ Uploaded!</span>}
+                
+                {imageUrl && (
+                  <div className="mt-2">
+                    <img 
+                      src={imageUrl} 
+                      alt="Profile preview" 
+                      className="w-24 h-24 object-cover border border-black rounded"
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>
