@@ -30,7 +30,8 @@ def create_or_get_user():
         print("got request")
         print(request)
         data = request.get_json()
-        user_id = data.get('user_id')
+        user_id = data.get('sub')
+        data['user_id'] = user_id
         print(data)
         
         if not user_id:
@@ -55,4 +56,4 @@ def create_or_get_user():
         return jsonify(data), 201
         
     except Exception as e:
-        return jsonify({'error': str(e)}), 500 
+        return jsonify({'error': str(e)}), 500
