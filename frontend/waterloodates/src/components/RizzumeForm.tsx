@@ -87,48 +87,48 @@ const RizzumeForm = forwardRef<RizzumeFormRef, RizzumeFormProps>(({ onSubmit, on
   return (
     <div className="p-6 max-w-5xl mx-auto bg-white">
       <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold tracking-wider">{viewMode ? 'RIZZUME' : 'RIZZUME FORM'}</h1>
+        <h1 className="text-2xl font-bold tracking-wider text-black">{viewMode ? 'RIZZUME' : 'RIZZUME FORM'}</h1>
       </div>
 
       <form id="rizzume-form" onSubmit={handleSubmit} className="space-y-4">
         {/* Profile Section */}
         <div className="border border-black">
           <div className="bg-blue-100 border-b border-black px-4 py-1">
-            <h2 className="font-bold text-center tracking-wide">PROFILE</h2>
+            <h2 className="font-bold text-center tracking-wide text-black">PROFILE</h2>
           </div>
           <div className="p-4 space-y-3">
             {/* Full Name Row */}
             <div className="flex items-center gap-8">
               <div className="flex-1">
                 <div className="flex items-start gap-4">
-                  <label className="font-semibold pt-2 min-w-fit">FULL NAME:</label>
+                  <label className="font-semibold pt-2 min-w-fit text-black">FULL NAME:</label>
                   <div className="flex gap-4 flex-1">
                     <div className="flex-1">
                       <input 
                         name="firstName" 
                         defaultValue={initialData?.profile?.name?.first || ''} 
                         readOnly={viewMode}
-                        className={`w-full border-b border-black bg-transparent outline-none pb-1 ${viewMode ? 'cursor-default' : ''}`} 
+                        className={`w-full border-b border-black bg-transparent outline-none pb-1 text-black ${viewMode ? 'cursor-default' : ''}`} 
                       />
-                      <div className="text-xs text-center">First</div>
+                      <div className="text-xs text-center text-black">First</div>
                     </div>
                     <div className="flex-1">
                       <input 
                         name="middleName" 
                         defaultValue={initialData?.profile?.name?.middle || ''} 
                         readOnly={viewMode}
-                        className={`w-full border-b border-black bg-transparent outline-none pb-1 ${viewMode ? 'cursor-default' : ''}`} 
+                        className={`w-full border-b border-black bg-transparent outline-none pb-1 text-black ${viewMode ? 'cursor-default' : ''}`} 
                       />
-                      <div className="text-xs text-center">Middle</div>
+                      <div className="text-xs text-center text-black">Middle</div>
                     </div>
                     <div className="flex-1">
                       <input 
                         name="lastName" 
                         defaultValue={initialData?.profile?.name?.last || ''} 
                         readOnly={viewMode}
-                        className={`w-full border-b border-black bg-transparent outline-none pb-1 ${viewMode ? 'cursor-default' : ''}`} 
+                        className={`w-full border-b border-black bg-transparent outline-none pb-1 text-black ${viewMode ? 'cursor-default' : ''}`} 
                       />
-                      <div className="text-xs text-center">Last</div>
+                      <div className="text-xs text-center text-black">Last</div>
                     </div>
                   </div>
                 </div>
@@ -140,57 +140,57 @@ const RizzumeForm = forwardRef<RizzumeFormRef, RizzumeFormProps>(({ onSubmit, on
               {/* Age */}
               <div className="flex-1 min-w-0 gap-4 mt-1">
                 <div className="flex items-center gap-2">
-                  <label className="font-semibold">AGE:</label>
+                  <label className="font-semibold text-black">AGE:</label>
                   <input
                     name="age"
                     type="number"
                     min="0"
                     defaultValue={initialData?.profile?.age || ''}
                     readOnly={viewMode}
-                    className={`flex-1 border-b border-black bg-transparent outline-none pb-1 ml-2 ${viewMode ? 'cursor-default' : ''}`}
+                    className={`flex-1 border-b border-black bg-transparent outline-none pb-1 ml-2 text-black ${viewMode ? 'cursor-default' : ''}`}
                   />
                 </div>
               </div>
               {/* Gender */}
               <div className="flex-1 min-w-0 gap-4 mt-1">
                 <div className="flex items-center gap-2">
-                  <label className="font-semibold">GENDER:</label>
+                  <label className="font-semibold text-black">GENDER:</label>
                   <select
                     name="gender"
-                    className={`flex-1 border-b border-black bg-transparent outline-none pb-1 ml-2 ${viewMode ? 'cursor-default' : ''}`}
+                    className={`flex-1 border-b border-black bg-transparent outline-none pb-1 ml-2 text-black ${viewMode ? 'cursor-default' : ''}`}
                     defaultValue={initialData?.profile?.gender || ""}
                     disabled={viewMode}
                   >
-                    <option value="" disabled>
+                    <option value="" disabled className="text-black">
                       Select
                     </option>
-                    <option value="female">Female</option>
-                    <option value="male">Male</option>
-                    <option value="nonbinary">Non-binary</option>
-                    <option value="other">Other</option>
-                    <option value="preferNotToSay">Prefer not to say</option>
+                    <option value="female" className="text-black">Female</option>
+                    <option value="male" className="text-black">Male</option>
+                    <option value="nonbinary" className="text-black">Non-binary</option>
+                    <option value="other" className="text-black">Other</option>
+                    <option value="preferNotToSay" className="text-black">Prefer not to say</option>
                   </select>
                 </div>
               </div>
               {/* Sexuality */}
               <div className="flex-1 min-w-0 gap-4 mt-1">
                 <div className="flex items-center gap-2">
-                  <label className="font-semibold">SEXUALITY:</label>
+                  <label className="font-semibold text-black">SEXUALITY:</label>
                   <select
                     name="sexuality"
-                    className={`flex-1 border-b border-black bg-transparent outline-none pb-1 ml-2 ${viewMode ? 'cursor-default' : ''}`}
+                    className={`flex-1 border-b border-black bg-transparent outline-none pb-1 ml-2 text-black ${viewMode ? 'cursor-default' : ''}`}
                     defaultValue={initialData?.profile?.sexuality || ""}
                     disabled={viewMode}
                   >
-                    <option value="" disabled>
+                    <option value="" disabled className="text-black">
                       Select
                     </option>
-                    <option value="straight">Straight</option>
-                    <option value="gay">Gay</option>
-                    <option value="lesbian">Lesbian</option>
-                    <option value="bisexual">Bisexual</option>
-                    <option value="pansexual">Pansexual</option>
-                    <option value="queer">Queer</option>
+                    <option value="straight" className="text-black">Straight</option>
+                    <option value="gay" className="text-black">Gay</option>
+                    <option value="lesbian" className="text-black">Lesbian</option>
+                    <option value="bisexual" className="text-black">Bisexual</option>
+                    <option value="pansexual" className="text-black">Pansexual</option>
+                    <option value="queer" className="text-black">Queer</option>
                   </select>
                 </div>
               </div>
@@ -198,7 +198,7 @@ const RizzumeForm = forwardRef<RizzumeFormRef, RizzumeFormProps>(({ onSubmit, on
 
             {/* Profile Image Upload */}
             <div className="flex items-start gap-4">
-              <label className="font-semibold min-w-fit pt-2">PROFILE IMAGE:</label>
+              <label className="font-semibold min-w-fit pt-2 text-black">PROFILE IMAGE:</label>
               <div className="flex-1">
                 {!viewMode && (
                   <>
@@ -206,10 +206,10 @@ const RizzumeForm = forwardRef<RizzumeFormRef, RizzumeFormProps>(({ onSubmit, on
                       type="file"
                       onChange={handleImageUpload}
                       accept="image/*"
-                      className="w-full text-sm file:mr-4 file:py-1 file:px-2 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 mb-2"
+                      className="w-full text-sm text-black file:mr-4 file:py-1 file:px-2 file:rounded file:border-0 file:bg-gray-50 file:text-black hover:file:bg-gray-100 mb-2"
                     />
-                    {loading && <span className="text-sm text-blue-600">Uploading...</span>}
-                    {uploadedImageId && <span className="text-sm text-green-600">✅ Uploaded!</span>}
+                    {loading && <span className="text-sm text-black">Uploading...</span>}
+                    {uploadedImageId && <span className="text-sm text-black">✅ Uploaded!</span>}
                   </>
                 )}
                 
@@ -230,36 +230,36 @@ const RizzumeForm = forwardRef<RizzumeFormRef, RizzumeFormProps>(({ onSubmit, on
         {/* Job Section */}
         <div className="border border-black">
           <div className="bg-blue-100 border-b border-black px-4 py-1">
-            <h2 className="font-bold text-center tracking-wide">JOB</h2>
+            <h2 className="font-bold text-center tracking-wide text-black">JOB</h2>
           </div>
           <div className="p-4 space-y-3">
             <div className="flex items-center gap-4">
-              <label className="font-semibold min-w-fit">WORK TERM:</label>
+              <label className="font-semibold min-w-fit text-black">WORK TERM:</label>
               <select
                 name="workterm"
-                className={`flex-1 border-b border-black bg-transparent outline-none pb-1 ${viewMode ? 'cursor-default' : ''}`}
+                className={`flex-1 border-b border-black bg-transparent outline-none pb-1 text-black ${viewMode ? 'cursor-default' : ''}`}
                 defaultValue={initialData?.job?.workterm || ""}
                 disabled={viewMode}
               >
-                <option value="" disabled>
+                <option value="" disabled className="text-black">
                   Select
                 </option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
+                <option value="1" className="text-black">1</option>
+                <option value="2" className="text-black">2</option>
+                <option value="3" className="text-black">3</option>
+                <option value="4" className="text-black">4</option>
+                <option value="5" className="text-black">5</option>
+                <option value="6" className="text-black">6</option>
               </select>
             </div>
 
             <div className="flex items-center gap-4">
-              <label className="font-semibold min-w-fit">CURRENT JOB:</label>
+              <label className="font-semibold min-w-fit text-black">CURRENT JOB:</label>
               <input 
                 name="currentjob" 
                 defaultValue={initialData?.job?.currentjob || ''}
                 readOnly={viewMode}
-                className={`flex-1 border-b border-black bg-transparent outline-none pb-1 ${viewMode ? 'cursor-default' : ''}`} 
+                className={`flex-1 border-b border-black bg-transparent outline-none pb-1 text-black placeholder-gray-500 ${viewMode ? 'cursor-default' : ''}`} 
                 placeholder={viewMode ? '' : "e.g., Software Engineer at Google"} 
               />
             </div>
@@ -269,61 +269,61 @@ const RizzumeForm = forwardRef<RizzumeFormRef, RizzumeFormProps>(({ onSubmit, on
         {/* Fun Stuff Section */}
         <div className="border border-black">
           <div className="bg-blue-100 border-b border-black px-4 py-1">
-            <h2 className="font-bold text-center tracking-wide">FUN STUFF</h2>
+            <h2 className="font-bold text-center tracking-wide text-black">FUN STUFF</h2>
           </div>
           <div className="p-4 space-y-3">
             <div className="flex items-start gap-4">
-              <label className="font-semibold min-w-fit pt-2">BLURB:</label>
+              <label className="font-semibold min-w-fit pt-2 text-black">BLURB:</label>
               <textarea 
                 name="blurb" 
                 defaultValue={initialData?.fun_stuff?.blurb || ''}
                 readOnly={viewMode}
-                className={`flex-1 border border-black bg-transparent outline-none p-2 resize-none ${viewMode ? 'cursor-default' : ''}`} 
+                className={`flex-1 border border-black bg-transparent outline-none p-2 resize-none text-black placeholder-gray-500 ${viewMode ? 'cursor-default' : ''}`} 
                 rows={3}
                 placeholder={viewMode ? '' : "Tell us about yourself in a few sentences..."}
               />
             </div>
 
             <div className="flex items-center gap-4">
-              <label className="font-semibold min-w-fit">HOBBIES:</label>
+              <label className="font-semibold min-w-fit text-black">HOBBIES:</label>
               <input 
                 name="hobbies" 
                 defaultValue={initialData?.fun_stuff?.hobbies || ''}
                 readOnly={viewMode}
-                className={`flex-1 border-b border-black bg-transparent outline-none pb-1 ${viewMode ? 'cursor-default' : ''}`} 
+                className={`flex-1 border-b border-black bg-transparent outline-none pb-1 text-black placeholder-gray-500 ${viewMode ? 'cursor-default' : ''}`} 
                 placeholder={viewMode ? '' : "e.g., Reading, Gaming, Hiking"} 
               />
             </div>
 
             <div className="flex items-center gap-4">
-              <label className="font-semibold min-w-fit">FUN FACT:</label>
+              <label className="font-semibold min-w-fit text-black">FUN FACT:</label>
               <input 
                 name="fun_fact" 
                 defaultValue={initialData?.fun_stuff?.fun_fact || ''}
                 readOnly={viewMode}
-                className={`flex-1 border-b border-black bg-transparent outline-none pb-1 ${viewMode ? 'cursor-default' : ''}`} 
+                className={`flex-1 border-b border-black bg-transparent outline-none pb-1 text-black placeholder-gray-500 ${viewMode ? 'cursor-default' : ''}`} 
                 placeholder={viewMode ? '' : "Share something interesting about yourself!"} 
               />
             </div>
 
             <div className="flex items-center gap-4">
-              <label className="font-semibold min-w-fit">IDEAL PARTNER:</label>
+              <label className="font-semibold min-w-fit text-black">IDEAL PARTNER:</label>
               <input 
                 name="relationship_goals" 
                 defaultValue={initialData?.fun_stuff?.relationship_goals || ''}
                 readOnly={viewMode}
-                className={`flex-1 border-b border-black bg-transparent outline-none pb-1 ${viewMode ? 'cursor-default' : ''}`} 
+                className={`flex-1 border-b border-black bg-transparent outline-none pb-1 text-black placeholder-gray-500 ${viewMode ? 'cursor-default' : ''}`} 
                 placeholder={viewMode ? '' : "What are you looking for in a partner?"} 
               />
             </div>
 
             <div className="flex items-center gap-4">
-              <label className="font-semibold min-w-fit">DEALBREAKERS:</label>
+              <label className="font-semibold min-w-fit text-black">DEALBREAKERS:</label>
               <input 
                 name="dealbreakers" 
                 defaultValue={initialData?.fun_stuff?.dealbreakers || ''}
                 readOnly={viewMode}
-                className={`flex-1 border-b border-black bg-transparent outline-none pb-1 ${viewMode ? 'cursor-default' : ''}`} 
+                className={`flex-1 border-b border-black bg-transparent outline-none pb-1 text-black placeholder-gray-500 ${viewMode ? 'cursor-default' : ''}`} 
                 placeholder={viewMode ? '' : "Is there anything you can't have in a partner?"} 
               />
             </div>
