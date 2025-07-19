@@ -136,6 +136,7 @@ def create_or_update_interview():
         existing_application["transcript"] = ""
         existing_application["question_to_transcript_mapping"] = {}
         existing_application["gemini_response"] = {}
+        existing_application["interviewer_decision"] = ""
         applications_collection.update_one({"applicant_user_id": applicant_user_id, "interviewer_user_id": interviewer_user_id}, {"$set": existing_application})
         return jsonify({"success": True, "message": "interview created"}), 200
     except Exception as e:
@@ -143,15 +144,15 @@ def create_or_update_interview():
     
 
 # TODO: REPLACE WHEN ERIC IS DONE
-def gemini_response(applicant_rizzume, interviewer_rizzume, transcript):
+def gemini_response(applicant_rizzume, interviewer_rizzume, transcript, question_to_transcript_mapping):
     return {}
 
-# POST
-def check_and_update_processed_interview():
+# DON'T INCLUDE THIS AS ROUTE, THIS IS HELPER FUNCTION
+def check_and_update_processed_interview(interview_id):
     try:
-        data = request.get_json()
+        # data = request.get_json()
         
-        interview_id = data["interview_id"]
+        # interview_id = data["interview_id"]
         if not interview_id:
             return jsonify({"success": False, "error": "interview_id is required"}), 400
         
@@ -195,7 +196,7 @@ def check_and_update_processed_interview():
             existing_application["status"] = "complete"
             
             # PASS TRANSCRIPT AND QUESTION TO TRANSCRIPT MAPPING TO GEMINI
-            gemini_response = gemini_response(applicant_rizzume, interviewer_rizzume, transcript)
+            gemini_response = gemini_response(applicant_rizzume, interviewer_rizzume, transcript, question_to_transcript_mapping)
             existing_application["gemini_response"] = gemini_response
             applications_collection.update_one({"interview_id": interview_id}, {"$set": existing_application})
             return jsonify({"success": True, "message": "interview has been processed"}), 200

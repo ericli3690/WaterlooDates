@@ -93,9 +93,10 @@ def get_user_rizzume():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+# GET
 def get_all_rizzumes():
     try:
-        data = request.get_json()
+        # data = request.get_json()
         # filters = data.get('filters')
         rizzumes = list(rizzume_collection.find())
         

@@ -5,6 +5,7 @@
     "status": "string",
     "audio_url": "string",
     "question_to_transcript_mapping": {},
-    "transcript": {},
-    "gemini_response": {}
+    "transcript": "",
+    "gemini_response": {},
+    "interviewer_decision": "string"
 }
