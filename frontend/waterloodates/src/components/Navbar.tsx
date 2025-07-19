@@ -8,7 +8,7 @@ export default function Navbar() {
 
     const navLinks = [
         { href: '/dashboard', label: 'Dashboard' },
-        { href: '/profile', label: 'Profile' },
+        { href: '/rizzume', label: 'Rizzumé' },
         { href: '/settings', label: 'Settings' },
     ];
 
@@ -21,7 +21,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="text-2xl font-bold text-[#ff76e8]">
+          <Link href="/dashboard" className="text-2xl font-bold text-[#ff76e8]">
                 <span className="text-[#ffda23]">Waterloo</span>
                 <span className="text-[#ff76e8]">Dates</span>
           </Link>
@@ -48,7 +48,7 @@ export default function Navbar() {
             {/* Logout as a normal <a> */}
             <a
               href="/auth/logout"
-              className="px-3 py-2 rounded-md text-sm font-medium text-gray-200 hover:text-[#ff76e8] hover:bg-gray-700 transition"
+              className="px-3 py-2 rounded-md text-sm font-medium text-gray-200 hover:text-[#343434] hover:bg-[#ffda23] transition"
             >
               Log out
             </a>
