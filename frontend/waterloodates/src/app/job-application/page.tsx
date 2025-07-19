@@ -39,7 +39,7 @@ export default function JobApplicationForm() {
             age: rawData.age ? parseInt(rawData.age as string) : null,
             sexuality: rawData.sexuality || '',
             gender: rawData.gender || '',
-            image_id: uploadedImageId || ''
+            pfp_url: uploadedImageId || ''
         },
         job: {
             workterm: rawData.workterm ? parseInt(rawData.workterm as string) : null,
