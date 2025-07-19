@@ -204,18 +204,6 @@ export default function JobApplicationForm() {
           <pre className="bg-white p-4 rounded border overflow-auto text-sm">
             {JSON.stringify(formData, null, 2)}
           </pre>
-          <button
-            className="mt-4 bg-green-600 text-white px-6 py-2 rounded font-semibold hover:bg-green-700 transition-colors"
-            onClick={() => {
-              if (formData) {
-                // Print the JSON to the browser console
-                console.log(JSON.stringify(formData, null, 2));
-                alert('Form JSON has been printed to the console.');
-              }
-            }}
-          >
-            Print JSON to Console
-          </button>
         </div>
       )}
     </div>
