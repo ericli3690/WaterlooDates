@@ -48,7 +48,7 @@ def create_or_get_user():
         print("got passed checks")
         # User doesn't exist, create new document
         data['rizzume_created'] = False
-        data['ribbon_created'] = False
+        data['wingman_created'] = False
         
         result = users_collection.insert_one(data)
         data['_id'] = str(result.inserted_id)
