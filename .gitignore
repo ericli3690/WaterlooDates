@@ -4,7 +4,8 @@ __pycache__/
 *.log
 .DS_Store
 venv/
-.venv/ 
+Lib/
+Scripts/
 .venv/
 .env/
 frontend/waterloodates/.next/*
