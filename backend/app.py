@@ -9,7 +9,8 @@ from datetime import datetime
 # Import endpoint functions
 from endpoints.user import health, create_or_get_user
 from endpoints.rizzume import create_or_upload_rizzume, get_user_rizzume, get_all_rizzumes
-from endpoints.ribbon import ping_ribbon, create_or_update_interview_flow, create_or_update_interview, get_results
+from endpoints.ribbon import ping_ribbon, create_or_update_interview_flow, create_or_update_interview
+from endpoints.application import create_or_update_application, get_applications_for_interviewer_and_update_status, get_applications_for_applicant_and_update_status
 
 load_dotenv()
 
@@ -34,11 +35,13 @@ app.route('/api/health')(health)
 app.route('/api/create_or_get_user', methods=['POST'])(create_or_get_user)
 app.route('/api/create_or_upload_rizzume', methods=['POST'])(create_or_upload_rizzume)
 app.route('/api/get_user_rizzume', methods=['POST'])(get_user_rizzume)
-app.route('/api/get_all_rizzumes', methods=['POST'])(get_all_rizzumes)
+app.route('/api/get_all_rizzumes', methods=['GET'])(get_all_rizzumes)
 app.route('/api/ping_ribbon', methods=['GET'])(ping_ribbon) 
 app.route('/api/create_or_update_interview_flow', methods=['POST'])(create_or_update_interview_flow)
 app.route('/api/create_or_update_interview', methods=['POST'])(create_or_update_interview)
-app.route('/api/get_interview_results', methods=['GET'])(get_results)
+app.route('/api/create_or_update_application', methods=['POST'])(create_or_update_application)
+app.route('/api/get_applications_for_interviewer_and_update_status', methods=['POST'])(get_applications_for_interviewer_and_update_status)
+app.route('/api/get_applications_for_applicant_and_update_status', methods=['POST'])(get_applications_for_applicant_and_update_status)
 
 @app.route('/')
 def home():
