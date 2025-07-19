@@ -1,0 +1,10 @@
+{
+    "applicant_user_id": "string",
+    "interviewer_user_id": "string",
+    "interview_id": "string",
+    "status": "string",
+    "audio_url": "string",
+    "question_to_transcript_mapping": {},
+    "transcript": {},
+    "gemini_response": {}
+}

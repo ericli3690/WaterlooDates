@@ -14,6 +14,7 @@ TOKEN = os.getenv("RIBBON_TOKEN")
 user_collection = db['users']
 wingman_collection = db['wingman']
 applications_collection = db['applications']
+rizzume_collection = db['rizzume']
 
 # GET
 def ping_ribbon():
@@ -81,7 +82,9 @@ def create_or_update_interview_flow():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
     
+    
 # POST
+# Pass in application info
 def create_or_update_interview():
     try:
         data = request.get_json()
@@ -96,28 +99,17 @@ def create_or_update_interview():
             return jsonify({"success": False, "error": "applicant_user_id and interviewer_user_id are required"}), 400
         
         existing_applicant_user = user_collection.find_one({"user_id": applicant_user_id})
-        if not existing_applicant_user:
-            return jsonify({"success": False, "error": "applicant user doesn't exist"}), 400
-        
         existing_interviewer_user = user_collection.find_one({"user_id": interviewer_user_id})
-        if not existing_interviewer_user:
-            return jsonify({"success": False, "error": "interviewer user doesn't exist"}), 400
-        
         existing_wingman = wingman_collection.find_one({"user_id": interviewer_user_id})
-        if not existing_wingman:
-            return jsonify({"success": False, "error": "wingman doesn't exist"}), 400
-        
         existing_applicant_rizzume = existing_applicant_user["rizzume"]
-        if not existing_applicant_rizzume:
-            return jsonify({"success": False, "error": "applicant doesn't have a rizzume account"}), 400
-        
-        # existing_interviewer_rizzume = existing_interviewer_user["rizzume"]
-        # if not existing_interviewer_rizzume:
-        #     return jsonify({"success": False, "error": "interviewer doesn't have a rizzume account"}), 400
+        existing_interviewer_rizzume = existing_interviewer_user["rizzume"]
+        existing_application = applications_collection.find_one({"applicant_user_id": applicant_user_id, "interviewer_user_id": interviewer_user_id})
+
+        if not existing_application or not existing_applicant_user or not existing_interviewer_user or not existing_wingman or not existing_applicant_rizzume or not existing_interviewer_rizzume:
+            return jsonify({"success": False, "error": "create or update interview smth is cooked"}), 400
         
         flow_id = existing_wingman["interview_flow_id"]
         applicant_first_name = existing_applicant_rizzume["name"]["first"]
-        # applicant_middle_name = existing_applicant_rizzume["name"]["middle"]
         applicant_last_name = existing_applicant_rizzume["name"]["last"]
         applicant_email = existing_applicant_rizzume["email"]
         
@@ -137,31 +129,77 @@ def create_or_update_interview():
 
         response = requests.post(url, json=payload, headers=headers)
         interview_id = response.json()["interview_id"]
-        # interview_link = response.json()["interview_link"]
-        
-        existing_application = applications_collection.find_one({"applicant_user_id": applicant_user_id, "interviewer_user_id": interviewer_user_id})
 
-        if existing_application:
-            existing_application["interview_id"] = interview_id
-            applications_collection.update_one({"applicant_user_id": applicant_user_id, "interviewer_user_id": interviewer_user_id}, {"$set": existing_application})
-        else:
-            applications_collection.insert_one({"applicant_user_id": applicant_user_id, "interviewer_user_id": interviewer_user_id, "interview_id": interview_id})
-        
+        existing_application["interview_id"] = interview_id
+        existing_application["status"] = "incomplete"
+        existing_application["audio_url"] = ""
+        existing_application["transcript"] = ""
+        existing_application["question_to_transcript_mapping"] = {}
+        existing_application["gemini_response"] = {}
+        applications_collection.update_one({"applicant_user_id": applicant_user_id, "interviewer_user_id": interviewer_user_id}, {"$set": existing_application})
         return jsonify({"success": True, "message": "interview created"}), 200
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
     
-# GET
-def get_results():
+
+# TODO: REPLACE WHEN ERIC IS DONE
+def gemini_response(applicant_rizzume, interviewer_rizzume, transcript):
+    return {}
+
+# POST
+def check_and_update_processed_interview():
     try:
-        url = "https://app.ribbon.ai/be-api/v1/interviews"
-
-        headers = {
-            "accept": "application/json",
-            "authorization": f"Bearer {TOKEN}"
-        }
-
-        response = requests.get(url, headers=headers)
-        return jsonify({"success": True, "results": response.json()["interviews"]})
+        data = request.get_json()
+        
+        interview_id = data["interview_id"]
+        if not interview_id:
+            return jsonify({"success": False, "error": "interview_id is required"}), 400
+        
+        existing_application = applications_collection.find_one({"interview_id": interview_id})
+        if not existing_application:
+            return jsonify({"success": False, "error": "interview doesn't exist"}), 400
+        
+        applicant_user_id = existing_application["applicant_user_id"]
+        interviewer_user_id = existing_application["interviewer_user_id"]
+        
+        status = existing_application["status"]
+        if not status:
+            return jsonify({"success": False, "error": "status is required"}), 400
+        
+        if(status == "complete"):
+            return jsonify({"success": True, "message": "interview already processed"}), 200
+        
+        url = "https://app.ribbon.ai/be-api/v1/interviews/" + interview_id
+        response = requests.get(url)
+        
+        response = response.json()
+        ribbon_status = response["status"]
+        if not ribbon_status:
+            return jsonify({"success": False, "error": "ribbon status is required"}), 400
+        
+        if ribbon_status == "incomplete":
+            return jsonify({"success": True, "message": "interview is incomplete"}), 200
+        elif ribbon_status == "complete":
+            audio_url = response["audio_url"]
+            transcript = response["transcript"]
+            question_to_transcript_mapping = response["question_to_transcript_mapping"]
+            applicant_rizzume = rizzume_collection.find_one({"user_id": applicant_user_id})
+            interviewer_rizzume = rizzume_collection.find_one({"user_id": interviewer_user_id})
+            
+            if not applicant_rizzume or not interviewer_rizzume or not audio_url or not transcript or not question_to_transcript_mapping:
+                return jsonify({"success": False, "error": "audio_url, transcript, and question_to_transcript_mapping are required"}), 400
+            
+            existing_application["audio_url"] = audio_url
+            existing_application["transcript"] = transcript
+            existing_application["question_to_transcript_mapping"] = question_to_transcript_mapping
+            existing_application["status"] = "complete"
+            
+            # PASS TRANSCRIPT AND QUESTION TO TRANSCRIPT MAPPING TO GEMINI
+            gemini_response = gemini_response(applicant_rizzume, interviewer_rizzume, transcript)
+            existing_application["gemini_response"] = gemini_response
+            applications_collection.update_one({"interview_id": interview_id}, {"$set": existing_application})
+            return jsonify({"success": True, "message": "interview has been processed"}), 200
+        else:
+            return jsonify({"success": False, "message": "status is fucked"}), 200
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
