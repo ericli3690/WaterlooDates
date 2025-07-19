@@ -4,4 +4,6 @@ __pycache__/
 *.log
 .DS_Store
 venv/
-.venv/ 
+.venv/
+Lib/
+Scripts/

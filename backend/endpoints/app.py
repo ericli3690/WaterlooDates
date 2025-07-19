@@ -5,6 +5,7 @@ from bson import ObjectId
 import os
 from dotenv import load_dotenv
 from datetime import datetime
+from backend.endpoints import ribbon
 
 load_dotenv()
 
@@ -53,6 +54,58 @@ def get_user(user_id):
         return jsonify(user)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ping-ribbon', methods=['GET'])
+def ping():
+    try:
+        result = ribbon.ping_ribbon()
+        return jsonify({"success": True, "message": result})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+    
+@app.route('/api/create-interview-flow', methods=['POST'])
+def create_interview_flow():
+    try:
+        data = request.get_json()
+        posting_id = data.get('posting_id')
+        questions = data.get('questions', [])
+        
+        if not posting_id:
+            return jsonify({"success": False, "error": "posting_id is required"}), 400
+        
+        result = ribbon.create_interview_flow(posting_id, questions)
+        return jsonify({"success": True, "message": result})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
+@app.route('/api/create-interview', methods=['POST'])
+def create_interview():
+    try:
+        data = request.get_json()
+        flow_id = data.get('flow_id')
+        user_email = data.get('user_email')
+        first_name = data.get('first_name')
+        last_name = data.get('last_name')
+        
+        if not flow_id or not user_email or not first_name or not last_name:
+            return jsonify({"success": False, "error": "flow_id, user_email, first_name, and last_name are required"}), 400
+        
+        interview_id, interview_link = ribbon.create_interview(flow_id, user_email, first_name, last_name)
+        return jsonify({
+            "success": True, 
+            "interview_id": interview_id, 
+            "interview_link": interview_link
+        })
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
+@app.route('/api/interview-results', methods=['GET'])
+def get_results():
+    try:
+        results = ribbon.get_interview_results()
+        return jsonify({"success": True, "results": results})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
 
 if __name__ == '__main__':
     app.run(debug=True) 
