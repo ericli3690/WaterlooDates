@@ -1,0 +1,5 @@
+.venv/
+.env/
+frontend/waterloodates/.next/*
+frontend/waterloodates/node_modules/*
+frontend/waterloodates/next-env.d.ts
