@@ -1,0 +1,62 @@
+"use client";
+import React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+export default function Navbar() {
+    const pathname = usePathname();
+
+    const navLinks = [
+        { href: '/dashboard', label: 'Dashboard' },
+        { href: '/profile', label: 'Profile' },
+        { href: '/settings', label: 'Settings' },
+    ];
+
+    if (pathname === '/') {
+        return null; // Don't render Navbar on the home page
+    }
+
+    return (
+    <nav className="bg-gray-800 text-gray-100 shadow-md">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <Link href="/" className="text-2xl font-bold text-[#ff76e8]">
+                <span className="text-[#ffda23]">Waterloo</span>
+                <span className="text-[#ff76e8]">Dates</span>
+          </Link>
+
+          {/* Navigation Links */}
+          <div className="flex space-x-4">
+            {navLinks.map(({ href, label }) => {
+              const isActive = pathname === href;
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition ${
+                    isActive
+                      ? 'text-[#343434] bg-[#ff76e8]'
+                      : 'text-gray-200 hover:text-[#ff76e8] hover:bg-gray-700'
+                  }`}
+                >
+                  {label}
+                </Link>
+              );
+            })}
+
+            {/* Logout as a normal <a> */}
+            <a
+              href="/auth/logout"
+              className="px-3 py-2 rounded-md text-sm font-medium text-gray-200 hover:text-[#ff76e8] hover:bg-gray-700 transition"
+            >
+              Log out
+            </a>
+          </div>
+
+
+        </div>
+      </div>
+    </nav>
+  );
+}
