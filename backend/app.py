@@ -9,6 +9,7 @@ from datetime import datetime
 # Import endpoint functions
 from endpoints.user import health, create_or_get_user
 from endpoints.rizzume import create_or_upload_rizzume, get_rizzume
+from endpoints.ribbon import ping_ribbon, create_interview_flow, create_interview, get_results
 
 load_dotenv()
 
@@ -33,6 +34,10 @@ app.route('/api/health')(health)
 app.route('/api/create_or_get_user', methods=['POST'])(create_or_get_user)
 app.route('/api/create_or_upload_rizzume', methods=['POST'])(create_or_upload_rizzume)
 app.route('/api/get_rizzume', methods=['POST'])(get_rizzume)
+app.route('/api/ping_ribbon', methods=['GET'])(ping_ribbon) 
+app.route('/api/create_interview_flow', methods=['POST'])(create_interview_flow)
+app.route('/api/create_interview', methods=['POST'])(create_interview)
+app.route('/api/get_interview_results', methods=['GET'])(get_results)
 
 @app.route('/')
 def home():
