@@ -1,19 +1,16 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 
-interface WingmanPageProps {
-  userId: string;
-}
-
-export default function MakeWingmanPage({ userId }: WingmanPageProps) {
-  const [questions, setQuestions] = useState<string[]>(['']);
+export default withPageAuthRequired(function MakeWingmanPage({ user }: { user: any }) {
+  const [questions, setQuestions] = useState<string[]>([""]);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
   const addQuestion = () => {
-    setQuestions([...questions, '']);
+    setQuestions([...questions, ""]);
   };
 
   const deleteQuestion = (index: number) => {
@@ -29,48 +26,43 @@ export default function MakeWingmanPage({ userId }: WingmanPageProps) {
 
   const createWingman = async () => {
     try {
-      // Filter out empty questions
-      const validQuestions = questions.filter(q => q.trim() !== '');
-      
-      console.log('Questions:', validQuestions);
-      console.log('User ID:', userId);
+      const validQuestions = questions.filter((q) => q.trim() !== "");
 
-      const response = await fetch('http://127.0.0.1:5000/api/create-interview-flow', {
-        method: 'POST',
+      const response = await fetch("http://127.0.0.1:5000/api/create-interview-flow", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           posting_id: "001",
-          questions: validQuestions
+          questions: validQuestions,
         }),
       });
 
       const data = await response.json();
 
       if (data.success) {
-        console.log('Flow ID:', data.message);
         setShowSuccessDialog(true);
         setTimeout(() => setShowSuccessDialog(false), 3000);
       } else {
-        setErrorMessage(data.error || 'Failed to create wingman');
+        setErrorMessage(data.error || "Failed to create wingman");
         setShowErrorDialog(true);
         setTimeout(() => setShowErrorDialog(false), 3000);
       }
     } catch (error) {
-      setErrorMessage('Network error occurred');
+      setErrorMessage("Network error occurred");
       setShowErrorDialog(true);
       setTimeout(() => setShowErrorDialog(false), 3000);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="max-w-2xl w-full bg-white rounded-lg shadow-md p-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+    <div className="min-h-screen bg-[#343434] flex items-center justify-center p-4">
+      <div className="max-w-2xl w-full bg-white rounded-3xl shadow-2xl p-8 border-4 border-[#ffda23]">
+        <h1 className="text-3xl font-bold text-[#ff76e8] mb-8 text-center">
           Customize Your Wingman
         </h1>
-        
+
         <div className="space-y-4 mb-6">
           {questions.map((question, index) => (
             <div key={index} className="flex items-center space-x-3">
@@ -79,11 +71,11 @@ export default function MakeWingmanPage({ userId }: WingmanPageProps) {
                 value={question}
                 onChange={(e) => updateQuestion(index, e.target.value)}
                 placeholder="Enter your question here..."
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="flex-1 px-4 py-2 border-2 border-[#ff76e8] rounded-lg focus:outline-none focus:ring-4 focus:ring-[#ff76e8]/50"
               />
               <button
                 onClick={() => deleteQuestion(index)}
-                className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                className="p-2 text-[#ff76e8] hover:text-[#f054db] hover:bg-[#ffe0f7] rounded-lg transition-colors"
                 title="Delete question"
               >
                 🗑️
@@ -95,9 +87,9 @@ export default function MakeWingmanPage({ userId }: WingmanPageProps) {
         <div className="flex justify-center mb-8">
           <button
             onClick={addQuestion}
-            className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            className="flex items-center space-x-2 px-5 py-2 bg-[#ffda23] text-black rounded-lg hover:bg-[#f7e84a] transition-colors font-semibold"
           >
-            <span>+</span>
+            <span className="text-xl font-bold">+</span>
             <span>Add Question</span>
           </button>
         </div>
@@ -105,7 +97,7 @@ export default function MakeWingmanPage({ userId }: WingmanPageProps) {
         <div className="flex justify-center">
           <button
             onClick={createWingman}
-            className="px-8 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-semibold"
+            className="px-10 py-3 bg-[#ff76e8] text-black rounded-lg hover:bg-[#f054db] transition-colors font-semibold"
           >
             Create My Wingman
           </button>
@@ -113,18 +105,18 @@ export default function MakeWingmanPage({ userId }: WingmanPageProps) {
 
         {/* Success Dialog */}
         {showSuccessDialog && (
-          <div className="fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg z-50">
+          <div className="fixed top-4 right-4 bg-[#dafaf1] border-2 border-[#26a69a] text-[#008066] px-4 py-3 rounded-lg shadow-lg z-50">
             <p className="font-medium">Wingman created successfully!</p>
           </div>
         )}
 
         {/* Error Dialog */}
         {showErrorDialog && (
-          <div className="fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg z-50">
+          <div className="fixed top-4 right-4 bg-[#ffe6e6] border-2 border-[#e03e3e] text-[#a80000] px-4 py-3 rounded-lg shadow-lg z-50">
             <p className="font-medium">Error: {errorMessage}</p>
           </div>
         )}
       </div>
     </div>
   );
-}
+});
