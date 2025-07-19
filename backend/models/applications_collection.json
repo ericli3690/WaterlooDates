@@ -1,0 +1,8 @@
+{
+    "applicant_user_id": "string",
+    "interviewer_user_id": "string",
+    "interview_id": "string",
+    "done_processing": false,
+    "interview_link": "string",
+    "transcript": {}
+}
