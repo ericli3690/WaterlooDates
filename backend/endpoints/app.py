@@ -12,8 +12,8 @@ app = Flask(__name__)
 CORS(app)
 
 # MongoDB connection
-client = MongoClient(os.getenv('MONGODB_URI', 'mongodb://localhost:27017/'))
-db = client['waterloo-dates']
+client = MongoClient(os.getenv('MONGODB_URI'))
+db = client['WaterlooDates']
 users_collection = db['users']
 
 @app.route('/')
@@ -55,4 +55,4 @@ def get_user(user_id):
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=os.getenv('PORT', 5000)) 
+    app.run(debug=True) 
