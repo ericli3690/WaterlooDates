@@ -74,7 +74,7 @@ def create_or_upload_rizzume():
     except Exception as e:
         return jsonify({'error': str(e)}), 500 
     
-def get_rizzume():
+def get_user_rizzume():
     try:
         data = request.get_json()
         user_id = data.get('user_id')
@@ -92,3 +92,19 @@ def get_rizzume():
         return jsonify(rizzume), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+def get_all_rizzumes():
+    try:
+        data = request.get_json()
+        # filters = data.get('filters')
+        rizzumes = list(rizzume_collection.find())
+        
+        # Convert ObjectId to string for JSON serialization
+        for rizzume in rizzumes:
+            rizzume['_id'] = str(rizzume['_id'])
+            
+        return jsonify(rizzumes), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+        
