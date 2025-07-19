@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WaterlooDates Interview Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        button { margin: 10px; padding: 10px 20px; }
+        #iframe-container { margin-top: 20px; }
+        iframe { width: 100%; height: 600px; border: 1px solid #ccc; }
+        .hidden { display: none; }
+        .permission-status { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .permission-granted { background-color: #d4edda; color: #155724; }
+        .permission-denied { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>WaterlooDates Interview Test</h1>
+    
+    <button onclick="ping()">Test Ping</button>
+    <button onclick="createInterview()">Create Interview</button>
+    <button onclick="getResults()">Get Results</button>
+    <button onclick="requestMicrophonePermission()">Request Microphone Permission</button>
+    
+    <div id="permission-status"></div>
+    <div id="output"></div>
+    
+    <div id="iframe-container" class="hidden">
+        <h3>Interview Link:</h3>
+        <button onclick="openInNewTab()">Open Interview in New Tab</button>
+        <iframe id="interview-iframe" src="" allow="microphone; camera"></iframe>
+    </div>
+
+    <script>
+        let currentInterviewLink = null;
+
+        async function requestMicrophonePermission() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                document.getElementById('permission-status').innerHTML = 
+                    '<div class="permission-status permission-granted">Microphone permission granted!</div>';
+                stream.getTracks().forEach(track => track.stop()); // Stop the stream
+            } catch (error) {
+                document.getElementById('permission-status').innerHTML = 
+                    '<div class="permission-status permission-denied">Microphone permission denied: ' + error.message + '</div>';
+            }
+        }
+
+        function openInNewTab() {
+            if (currentInterviewLink) {
+                window.open(currentInterviewLink, '_blank');
+            }
+        }
+
+        async function ping() {
+            try {
+                const response = await fetch('/api/ping');
+                const data = await response.json();
+                document.getElementById('output').innerHTML = `<p>Ping: ${data.success ? data.message : data.error}</p>`;
+            } catch (error) {
+                document.getElementById('output').innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+
+        async function createInterview() {
+            try {
+                const response = await fetch('/api/create-interview', {
+                    method: 'POST'
+                });
+                console.log("hiiiiiii")
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentInterviewLink = data.interview_link;
+                    document.getElementById('output').innerHTML = `
+                        <p>Interview created successfully!</p>
+                        <p>Interview ID: ${data.interview_id}</p>
+                        <p>Interview Link: <a href="${data.interview_link}" target="_blank">${data.interview_link}</a></p>
+                    `;
+                    
+                    // Show iframe with the interview link
+                    const iframe = document.getElementById('interview-iframe');
+                    iframe.src = data.interview_link;
+                    document.getElementById('iframe-container').classList.remove('hidden');
+                    
+                    // Try to request microphone permission automatically
+                    setTimeout(() => {
+                        requestMicrophonePermission();
+                    }, 1000);
+                } else {
+                    document.getElementById('output').innerHTML = `<p>Error: ${data.error}</p>`;
+                }
+            } catch (error) {
+                document.getElementById('output').innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+
+        async function getResults() {
+            try {
+                const response = await fetch('/api/interview-results');
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('output').innerHTML = `
+                        <p>Results:</p>
+                        <pre>${JSON.stringify(data.results, null, 2)}</pre>
+                    `;
+                } else {
+                    document.getElementById('output').innerHTML = `<p>Error: ${data.error}</p>`;
+                }
+            } catch (error) {
+                document.getElementById('output').innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html> 
