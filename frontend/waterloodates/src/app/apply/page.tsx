@@ -118,6 +118,7 @@ export default withPageAuthRequired(function ApplyPage({ user }: { user: any }) 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-[#5b3e4a] text-white flex flex-col items-center justify-center px-4 py-12">
       <div className="bg-white text-[#5b3e4a] rounded-3xl shadow-xl p-10 max-w-xl w-full text-center space-y-6 relative">
+      <div className="bg-white text-[#5b3e4a] rounded-3xl shadow-xl p-10 max-w-xl w-full text-center space-y-6 relative">
         
         {/* Back Button */}
         <button
