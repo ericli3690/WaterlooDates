@@ -114,13 +114,6 @@ export default withPageAuthRequired(function ViewRizzumePage({ user }) {
           <h1 className="text-3xl font-bold text-white text-center mb-8">
             💘 Available Rizzumés
           </h1>
-          {!loading && (
-            <p className="text-gray-600">
-              {profiles.length === 0
-                ? "No profiles found"
-                : `Found ${profiles.length} profile${profiles.length === 1 ? '' : 's'}...`}
-            </p>
-          )}
         </div>
    
 
