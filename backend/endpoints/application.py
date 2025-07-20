@@ -66,11 +66,21 @@ def create_application():
         if not check_has_wingman(interviewer_user_id):
             return jsonify({"success": False, "error": "wingman doesn't exist"}), 400
         
+        applicant_rizzume = rizzume_collection.find_one({"user_id": applicant_user_id})
+        interviewer_rizzume = rizzume_collection.find_one({"user_id": interviewer_user_id})
+        if not applicant_rizzume or not interviewer_rizzume:
+            return jsonify({"success": False, "error": "rizzume doesn't exist"}), 400
+        
+        applicant_name = f"{applicant_rizzume["profile"]["name"]["first"]} {applicant_rizzume["profile"]["name"]["last"]}"
+        interviewer_name = f"{interviewer_rizzume["profile"]["name"]["first"]} {interviewer_rizzume["profile"]["name"]["last"]}"
+        
         existing_application = applications_collection.find_one({"applicant_user_id": applicant_user_id, "interviewer_user_id": interviewer_user_id})
         if not existing_application:
             new_application = {
                 "applicant_user_id": applicant_user_id,
                 "interviewer_user_id": interviewer_user_id,
+                "applicant_name": applicant_name,
+                "interviewer_name": interviewer_name,
                 "interview_id": "",
                 "interview_link": "",
                 "status": 0,
@@ -133,6 +143,8 @@ def update_application():
         else:
             existing_application["interview_id"] = data["interview_id"]
             existing_application["interview_link"] = data["interview_link"]
+            existing_application["applicant_name"] = data["applicant_name"]
+            existing_application["interviewer_name"] = data["interviewer_name"]
             existing_application["status"] = data["status"]
             existing_application["audio_url"] = data["audio_url"]
             existing_application["question_to_transcript_mapping"] = data["question_to_transcript_mapping"]
