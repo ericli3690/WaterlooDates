@@ -57,3 +57,25 @@ def create_or_get_user():
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+def get_user_socials():
+    try:
+        data = request.get_json()
+        user_id = data["user_id"]
+        existing_user = users_collection.find_one({"user_id": user_id})
+        if not existing_user:
+            return jsonify({"success": False, "error": "user doesn't exist"}), 400
+        
+        existing_rizzume = rizzume_collection.find_one({"user_id": user_id})
+        if not existing_rizzume:
+            return jsonify({"success": False, "error": "rizzume doesn't exist"}), 400
+        
+        existing_socials = existing_rizzume["socials"]
+        if not existing_socials:
+            return jsonify({"success": False, "error": "rizzume doesn't have socials"}), 400
+        
+        return jsonify({"success": True, "socials": existing_socials}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+    
+    
