@@ -208,7 +208,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                   const strokeColor = conf >= 70 ? "#26a69a" : conf >= 40 ? "#ffda23" : "#e03e3e";
                   if (app.interviewer_decision === InterviewerDecision.REJECTED) return null;
 
-                  let contactInfo: string = "";
+                  let contactInfo: any = {};
                   if (app.interviewer_decision === InterviewerDecision.ACCEPTED) {
                     fetch(`http://localhost:5000/api/get_user_socials`, {
                       method: "POST",
@@ -274,7 +274,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                         {app.interviewer_decision === InterviewerDecision.ACCEPTED && (
                           <div className="mt-4">
                             <p className="font-semibold mb-2">Contact Information:</p>
-                            { contactInfo }
+                            { contactInfo.success ? contactInfo.socials : "No contact information available." }
                           </div>
                         )}
 
@@ -295,7 +295,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                                     "interviewer_decision": InterviewerDecision.ACCEPTED,
                                   }),
                                 });
-                                router.refresh();
+                                window.location.reload();
                               }}
                             >
                               Accept
@@ -314,7 +314,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                                     "interviewer_decision": InterviewerDecision.REJECTED,
                                   }),
                                 });
-                                router.refresh();
+                                window.location.reload();
                               }}
                             >
                               Reject
