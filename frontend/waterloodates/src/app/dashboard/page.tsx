@@ -8,7 +8,7 @@ interface Application {
     applicant_user_id: string;
     interviewer_user_id: string;
     applicant_name: string;
-    recipient_name: string;
+    interviewer_name: string;
     created_at: string;
     application_id: string;
     status: string;
@@ -177,7 +177,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                     key={idx}
                     className="p-4 bg-white text-black border border-yellow-300 rounded-xl shadow"
                   >
-                    <p className="font-semibold">Application to {app.recipient_name ? app.recipient_name : "Someone"}</p>
+                    <p className="font-semibold">Application to {app.interviewer_name ? app.interviewer_name : "Someone"}</p>
                     <span className="block text-sm text-gray-600 mb-2">
                       Status: {prettyPrintStatus(app.status)}
                     </span>

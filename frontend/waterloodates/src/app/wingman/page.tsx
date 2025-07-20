@@ -33,16 +33,35 @@ export default withPageAuthRequired(function WingmanPage({ user }) {
   }, [user]);
 
   return (
-    <div className="min-h-screen bg-[#664e5b] flex items-center justify-center p-4">
-      <div className="max-w-3xl w-full bg-white rounded-2xl border border-yellow-400 shadow-xl p-8 text-center">
+    <div className="bg-[#664e5b] min-h-screen flex items-center justify-center px-4">
+      <div className="bg-white border border-yellow-400 rounded-2xl shadow-2xl p-10 max-w-2xl w-full text-center">
+        <h1 className="text-4xl font-bold mb-4 text-[#ff76e8]">Your Wingman</h1>
+        <p className="text-gray-700 mb-3">
+          Your Wingman is your AI-powered interview assistant that helps you conduct meaningful conversations with potential matches.
+        </p>
+        <p className="text-gray-700 mb-3">
+          It asks thoughtful questions, analyzes responses, and provides insights to help you make informed decisions about compatibility.
+        </p>
+        <p className="text-gray-700 mb-8">
+          Let your Wingman guide you through engaging interviews and discover deeper connections beyond surface-level attraction.
+        </p>
+
         {wingmanCreated ? (
-          <h1 className="text-3xl font-bold text-[#ff76e8]">
-            Your Wingman is ready!
-          </h1>
+          <div>
+            <p className="text-green-600 font-semibold mb-4 text-lg">
+              Your Wingman is ready to help you interview candidates!
+            </p>
+            <a
+              href="/make-wingman"
+              className="inline-block bg-[#ffda23] hover:bg-[#ffce00] text-black font-semibold py-3 px-6 rounded-full shadow transition duration-300"
+            >
+              Edit Wingman
+            </a>
+          </div>
         ) : (
           <a
             href="/make-wingman"
-            className="inline-block bg-[#ffda23] hover:bg-[#ffce00] text-black font-semibold py-3 px-8 rounded-2xl shadow-lg transition duration-300"
+            className="inline-block bg-[#ffda23] hover:bg-[#ffce00] text-black font-semibold py-3 px-6 rounded-full shadow transition duration-300"
           >
             Create Wingman
           </a>
