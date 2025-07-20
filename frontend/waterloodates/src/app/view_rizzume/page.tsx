@@ -187,13 +187,6 @@ export default withPageAuthRequired(function ViewRizzumePage({ user }) {
               Filter
             </Button>
           </div>
-          {!loading && (
-            <p className="text-gray-300">
-              {filteredProfiles.length === 0
-                ? "No profiles found"
-                : `Found ${filteredProfiles.length} profile${filteredProfiles.length === 1 ? '' : 's'}...`}
-            </p>
-          )}
         </div>
    
 
