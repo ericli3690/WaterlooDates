@@ -12,7 +12,7 @@ export default function LoginButton() {
     <div className="relative inline-block">
       <a
         href="/auth/login?returnTo=/dashboard"
-        className="flex items-center gap-2 px-4 py-2 bg-[#ff76e8] text-white rounded hover:bg-[#ff96f8] transition"
+        className="flex items-center gap-2 px-4 py-2 bg-[#ff76e8] text-white rounded hover:bg-[#ff96f8] transition hover:cursor-pointer"
         onMouseEnter={handleMouseEnter}
       >
         Find Your Match

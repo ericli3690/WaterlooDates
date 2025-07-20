@@ -67,7 +67,7 @@ export default function ViewRizzumePage() {
         <div className="flex justify-end p-4 pb-0">
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-2xl font-bold"
+            className="text-gray-500 hover:text-gray-700 text-2xl font-bold hover:cursor-pointer"
           >
             ×
           </button>
@@ -115,7 +115,7 @@ export default function ViewRizzumePage() {
           {profiles.map((profile) => (
             <button
               key={profile.user_id}
-              className="group flex flex-col items-center p-6 border-2 border-gray-200 rounded-lg shadow-md hover:shadow-lg hover:border-blue-300 transition-all duration-200 bg-white"
+              className="group flex flex-col items-center p-6 border-2 border-gray-200 rounded-lg shadow-md hover:shadow-lg hover:border-blue-300 transition-all duration-200 bg-white hover:cursor-pointer"
               onClick={() => setSelectedProfile(profile)}
             >
               <div className="w-20 h-20 mb-3 overflow-hidden rounded-full border-2 border-gray-300 group-hover:border-blue-400 transition-colors">
