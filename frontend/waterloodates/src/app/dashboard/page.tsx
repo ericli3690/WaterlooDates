@@ -25,66 +25,8 @@ interface Application {
 export default withPageAuthRequired(function DashboardPage({ user }) {
 
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [outgoingApplications, setOutgoingApplications] = useState<Application[]>([
-    {
-      _id: "1",
-      applicant_user_id: "1",
-      interviewer_user_id: "2",
-      applicant_name: "John Doe",
-      recipient_name: "Jane Smith",
-      status: "Pending",
-      created_at: new Date().toISOString(),
-      application_id: "app-123",
-      interview_id: "",
-      interview_link: "",
-      audio_url: "",
-      transcript: "",
-      gemini_response: null,
-      interviewer_decision: "",
-    }
-  ]);
-  const [incomingApplications, setIncomingApplications] = useState<Application[]>([
-    {
-      _id: "2",
-      applicant_user_id: "3",
-      interviewer_user_id: "1",
-      applicant_name: "Alice Johnson",
-      recipient_name: "John Doe",
-      status: "Completed",
-      created_at: new Date().toISOString(),
-      application_id: "app-456",
-      interview_id: "",
-      interview_link: "",
-      audio_url: "",
-      transcript: "",
-      gemini_response: {
-        summary: "Alice was confident and answered all questions thoroughly. She seems genuinely interested and aligns well with your interests.",
-        opinion: "Your wingman thinks Alice is a great match and you should definitely consider a date!",
-        confidence: 85,
-      },
-      interviewer_decision: "",
-    },
-    {
-      _id: "3",
-      applicant_user_id: "4",
-      interviewer_user_id: "1",
-      applicant_name: "Bob Smith",
-      recipient_name: "John Doe",
-      status: "Completed",
-      created_at: new Date().toISOString(),
-      application_id: "app-789",
-      interview_id: "",
-      interview_link: "",
-      audio_url: "",
-      transcript: "",
-      gemini_response: {
-        summary: "Bob seemed a bit nervous and his answers were short. Compatibility might be moderate.",
-        opinion: "Wingman recommends another chat to gauge chemistry before committing to a date.",
-        confidence: 55,
-      },
-      interviewer_decision: "",
-    },
-  ]);
+  const [outgoingApplications, setOutgoingApplications] = useState<Application[]>([]);
+  const [incomingApplications, setIncomingApplications] = useState<Application[]>([]);
 
   const [activeTab, setActiveTab] = useState<"outgoing" | "incoming">("outgoing");
   const hasInitialized = useRef(false);
@@ -103,6 +45,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
           setUserData(data);
 
           if (data.rizzume_created) {
+            // Fetch outgoing applications
             fetch("http://127.0.0.1:5000/api/get_applications_for_applicant_and_update_status", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -198,7 +141,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
             <div className="flex space-x-4 mb-6">
               <button
                 onClick={() => setActiveTab("outgoing")}
-                className={`py-2 px-4 rounded font-medium ${
+                className={`py-2 px-4 rounded font-medium hover:cursor-pointer ${
                   activeTab === "outgoing"
                     ? "bg-[#ff76e8] text-black"
                     : "bg-gray-200 text-gray-700"
@@ -210,7 +153,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
               {userData.wingman_created && (
                 <button
                   onClick={() => setActiveTab("incoming")}
-                  className={`py-2 px-4 rounded font-medium ${
+                  className={`py-2 px-4 rounded font-medium hover:cursor-pointer ${
                     activeTab === "incoming"
                       ? "bg-[#ffda23] text-black"
                       : "bg-gray-200 text-gray-700"
@@ -229,12 +172,20 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                     key={idx}
                     className="p-4 bg-white text-black border border-yellow-300 rounded-xl shadow"
                   >
-                    You applied to {app.interviewer_user_id}!
-                    <span className="block text-sm text-gray-600">
+                    <p className="font-semibold">Application to {app.recipient_name}</p>
+                    <span className="block text-sm text-gray-600 mb-2">
                       Status: {app.status}
+                    </span>
+                    <span className="block text-sm text-gray-500">
+                      Applied on: {new Date(app.created_at).toLocaleDateString()}
                     </span>
                   </li>
                 ))}
+                {outgoingApplications.length === 0 && (
+                  <li className="p-4 bg-gray-50 text-gray-500 border border-gray-200 rounded-xl text-center">
+                    No outgoing applications yet. Start by searching for potential matches!
+                  </li>
+                )}
               </ul>
             )}
 
@@ -264,9 +215,26 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                               {app.gemini_response.summary || "N/A"}
                             </p>
                             <p className="font-semibold mb-1">Your Wingman's Opinion:</p>
-                            <p className="text-sm text-gray-700 whitespace-pre-line">
+                            <p className="text-sm text-gray-700 whitespace-pre-line mb-3">
                               {app.gemini_response.opinion || "N/A"}
                             </p>
+                            {app.audio_url && (
+                              <div className="mb-2">
+                                <p className="font-semibold mb-2 text-[#ff76e8]">Listen To Them:</p>
+                                <audio 
+                                  controls 
+                                  className="w-full h-10 rounded-lg bg-[#ffe0f7] border-2 border-[#ff76e8] focus:outline-none focus:ring-2 focus:ring-[#ff76e8]/50"
+                                  style={{
+                                    '--plyr-color-main': '#ff76e8',
+                                    '--plyr-audio-controls-background': '#ffe0f7',
+                                    '--plyr-audio-control-color': '#ff76e8',
+                                  } as React.CSSProperties}
+                                >
+                                  <source src={app.audio_url} type="audio/wav" />
+                                  Your browser does not support the audio element.
+                                </audio>
+                              </div>
+                            )}
                           </>
                         )}
                       </div>
@@ -293,6 +261,11 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                     </li>
                   );
                 })}
+                {incomingApplications.length === 0 && (
+                  <li className="p-4 bg-gray-50 text-gray-500 border border-gray-200 rounded-xl text-center">
+                    No incoming applications yet. Your wingman will review applications when they come in!
+                  </li>
+                )}
               </ul>
             )}
           </div>
