@@ -44,8 +44,8 @@ export default withPageAuthRequired(function ViewRizzumePage({ user }) {
   
   // Filter ref (doesn't cause re-renders)
   const filtersRef = useRef({
-    genders: ['Male', 'Female', 'Non-binary', 'Other', 'Prefer not to say'],
-    sexualities: ['Straight', 'Gay', 'Lesbian', 'Bisexual', 'Pansexual', 'Queer'],
+    genders: ['male', 'female', 'non-binary', 'other', 'prefer not to say'],
+    sexualities: ['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'queer'],
     minAge: 0,
     maxAge: 100,
     minWorkTerm: 0,
@@ -76,13 +76,14 @@ export default withPageAuthRequired(function ViewRizzumePage({ user }) {
   const applyFilters = () => {
     console.log("applying filters", filtersRef.current);
     const filtered = profiles.filter(profile => {
-      // Filter by gender
-      if (filtersRef.current.genders.length > 0 && !filtersRef.current.genders.includes(profile.profile.gender)) {
+      console.log("profile", profile);
+      // Filter by gender (case-insensitive)
+      if (filtersRef.current.genders.length > 0 && !filtersRef.current.genders.includes(profile.profile.gender.toLowerCase())) {
         return false;
       }
       
-      // Filter by sexuality
-      if (filtersRef.current.sexualities.length > 0 && !filtersRef.current.sexualities.includes(profile.profile.sexuality)) {
+      // Filter by sexuality (case-insensitive)
+      if (filtersRef.current.sexualities.length > 0 && !filtersRef.current.sexualities.includes(profile.profile.sexuality.toLowerCase())) {
         return false;
       }
       
@@ -296,8 +297,8 @@ function FilterModal({
     maxWorkTerm: number;
   }) => void;
 }) {
-  const genderOptions = ['Male', 'Female', 'Non-binary', 'Other', 'Prefer not to say'];
-  const sexualityOptions = ['Straight', 'Gay', 'Lesbian', 'Bisexual', 'Pansexual', 'Queer'];
+  const genderOptions = ['male', 'female', 'non-binary', 'other', 'prefer not to say'];
+  const sexualityOptions = ['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'queer'];
   
   const [localFilters, setLocalFilters] = useState({
     genders: genderOptions,
