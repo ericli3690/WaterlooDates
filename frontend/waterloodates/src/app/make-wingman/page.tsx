@@ -86,7 +86,7 @@ export default withPageAuthRequired(function MakeWingmanPage({ user }: { user: a
                 value={qa.question}
                 onChange={(e) => updateQuestion(index, e.target.value)}
                 placeholder="Enter your question here..."
-                className="flex-1 px-4 py-2 border-2 border-[#ff76e8] text-gray-500 rounded-lg focus:outline-none focus:ring-4 focus:ring-[#ff76e8]/50"
+                className="flex-1 text-[#ff76e8] px-4 py-2 border-2 border-[#ff76e8] text-gray-500 rounded-lg focus:outline-none focus:ring-4 focus:ring-[#ff76e8]/50"
               />
               <input
                 type="text"

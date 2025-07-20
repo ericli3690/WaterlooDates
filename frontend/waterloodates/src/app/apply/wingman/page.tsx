@@ -65,7 +65,7 @@ export default function ApplyWingmanPage({ applicantUserId, interviewerUserId }:
   }
   
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-                                                                        h-[calc(100vh-4rem)] bg-gray-50 flex items-center justify-center p-4">
       <div className="max-w-4xl w-full bg-white rounded-lg shadow-md p-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">
           Wingman Application
