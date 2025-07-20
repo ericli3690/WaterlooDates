@@ -97,3 +97,5 @@ export default withPageAuthRequired(function SearchPage({ user }) {
     </div>
   );
 });
+
+

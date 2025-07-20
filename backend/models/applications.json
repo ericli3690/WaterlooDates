@@ -2,6 +2,7 @@
     "applicant_user_id": "string",
     "interviewer_user_id": "string",
     "interview_id": "string",
+    "interview_link": "string",
     "status": "string",
     "audio_url": "string",
     "question_to_transcript_mapping": {},

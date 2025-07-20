@@ -62,6 +62,9 @@ def create_or_update_interview_flow():
         }
 
         response = requests.post(ribbon_url, json=payload, headers=headers)
+        print("-------------TLALALALALAL-------------------")
+        print(response.json())
+        print("-------------TLALALALALAL-------------------")
         interview_flow_id = response.json()["interview_flow_id"]
         
         store_data = {
@@ -97,22 +100,22 @@ def create_or_update_interview():
         
         if not applicant_user_id or not interviewer_user_id:
             return jsonify({"success": False, "error": "applicant_user_id and interviewer_user_id are required"}), 400
-        
+        # print("CHECK 1")
         existing_applicant_user = user_collection.find_one({"user_id": applicant_user_id})
         existing_interviewer_user = user_collection.find_one({"user_id": interviewer_user_id})
         existing_wingman = wingman_collection.find_one({"user_id": interviewer_user_id})
-        existing_applicant_rizzume = existing_applicant_user["rizzume"]
-        existing_interviewer_rizzume = existing_interviewer_user["rizzume"]
+        existing_applicant_rizzume = rizzume_collection.find_one({"user_id": applicant_user_id})
+        existing_interviewer_rizzume = rizzume_collection.find_one({"user_id": interviewer_user_id})
         existing_application = applications_collection.find_one({"applicant_user_id": applicant_user_id, "interviewer_user_id": interviewer_user_id})
-
+        # print("CHECK 2")
         if not existing_application or not existing_applicant_user or not existing_interviewer_user or not existing_wingman or not existing_applicant_rizzume or not existing_interviewer_rizzume:
             return jsonify({"success": False, "error": "create or update interview smth is cooked"}), 400
-        
+        # print("CHECK 3")
         flow_id = existing_wingman["interview_flow_id"]
-        applicant_first_name = existing_applicant_rizzume["name"]["first"]
-        applicant_last_name = existing_applicant_rizzume["name"]["last"]
-        applicant_email = existing_applicant_rizzume["email"]
-        
+        applicant_first_name = existing_applicant_rizzume["profile"]["name"]["first"]
+        applicant_last_name = existing_applicant_rizzume["profile"]["name"]["last"]
+        applicant_email = existing_interviewer_user["email"]
+        # print("CHECK 4")
         url = "https://app.ribbon.ai/be-api/v1/interviews"
 
         payload = {
@@ -126,12 +129,21 @@ def create_or_update_interview():
             "content-type": "application/json",
             "authorization": f"Bearer {TOKEN}"
         }
-
+        # print("CHECK 5")
+        # {
+        # "hint": null,
+        # "interview_id": "9e555688-a2e4-49bf-a55e-4f24614f7e15",
+        # "interview_link": "https://app.ribbon.ai/interview/api/bfba5e51/9e555688-a2e4-49bf-a55e-4f24614f7e15"
+        # }
         response = requests.post(url, json=payload, headers=headers)
+        
+        # print("CHECK 6")
         interview_id = response.json()["interview_id"]
-
+        interview_link = response.json()["interview_link"]
+        # print("CHECK 7")
         existing_application["interview_id"] = interview_id
-        existing_application["status"] = "incomplete"
+        existing_application["interview_link"] = interview_link
+        existing_application["status"] = 1
         existing_application["audio_url"] = ""
         existing_application["transcript"] = ""
         existing_application["question_to_transcript_mapping"] = {}
@@ -142,7 +154,6 @@ def create_or_update_interview():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
     
-
 # TODO: REPLACE WHEN ERIC IS DONE
 def gemini_response(applicant_rizzume, interviewer_rizzume, transcript, question_to_transcript_mapping):
     return {}
@@ -153,6 +164,7 @@ def check_and_update_processed_interview(interview_id):
         # data = request.get_json()
         
         # interview_id = data["interview_id"]
+        print("start polling")
         if not interview_id:
             return jsonify({"success": False, "error": "interview_id is required"}), 400
         
@@ -167,12 +179,20 @@ def check_and_update_processed_interview(interview_id):
         if not status:
             return jsonify({"success": False, "error": "status is required"}), 400
         
-        if(status == "complete"):
+        if(status == 2):
             return jsonify({"success": True, "message": "interview already processed"}), 200
         
         url = "https://app.ribbon.ai/be-api/v1/interviews/" + interview_id
-        response = requests.get(url)
         
+        headers = {
+            "accept": "application/json",
+            "content-type": "application/json",
+            "authorization": f"Bearer {TOKEN}"
+        }
+        
+        print("url: ", url)
+        response = requests.get(url, headers=headers)
+        print("response: ", response.json())
         response = response.json()
         ribbon_status = response["status"]
         if not ribbon_status:
@@ -193,7 +213,7 @@ def check_and_update_processed_interview(interview_id):
             existing_application["audio_url"] = audio_url
             existing_application["transcript"] = transcript
             existing_application["question_to_transcript_mapping"] = question_to_transcript_mapping
-            existing_application["status"] = "complete"
+            existing_application["status"] = 2
             
             # PASS TRANSCRIPT AND QUESTION TO TRANSCRIPT MAPPING TO GEMINI
             gemini_response = gemini_response(applicant_rizzume, interviewer_rizzume, transcript, question_to_transcript_mapping)
@@ -202,5 +222,20 @@ def check_and_update_processed_interview(interview_id):
             return jsonify({"success": True, "message": "interview has been processed"}), 200
         else:
             return jsonify({"success": False, "message": "status is fucked"}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+    
+def get_all_interviews():
+    try:
+        url = "https://app.ribbon.ai/be-api/v1/interviews"
+        
+        headers = {
+            "accept": "application/json",
+            "content-type": "application/json",
+            "authorization": f"Bearer {TOKEN}"
+        }
+        
+        response = requests.get(url, headers=headers)
+        return response.json()
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
