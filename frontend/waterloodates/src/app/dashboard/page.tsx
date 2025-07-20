@@ -57,11 +57,6 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                   setOutgoingApplications(resp.applications as Application[]);
                 }
               })
-              .then((resp) => {
-                if (resp && resp.applications) {
-                  setOutgoingApplications(resp.applications as Application[]);
-                }
-              })
               .catch(console.error);
 
             if (data.wingman_created) {
