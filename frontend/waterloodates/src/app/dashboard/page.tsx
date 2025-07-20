@@ -80,6 +80,11 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
     }
   }, [user]);
 
+  const prettyPrintStatus = (status: string) => {
+    console.log("status", status);
+    return (status = "1") ? "Processing" : "Completed"
+  };
+
   return (
     <div className="bg-[#664e5b] min-h-screen px-4 pt-16 py-6 relative">
 
@@ -172,12 +177,9 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                     key={idx}
                     className="p-4 bg-white text-black border border-yellow-300 rounded-xl shadow"
                   >
-                    <p className="font-semibold">Application to {app.recipient_name}</p>
+                    <p className="font-semibold">Application to {app.recipient_name ? app.recipient_name : "Someone"}</p>
                     <span className="block text-sm text-gray-600 mb-2">
-                      Status: {app.status}
-                    </span>
-                    <span className="block text-sm text-gray-500">
-                      Applied on: {new Date(app.created_at).toLocaleDateString()}
+                      Status: {prettyPrintStatus(app.status)}
                     </span>
                   </li>
                 ))}
@@ -204,10 +206,9 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                     >
                       <div className="pr-4 flex-1">
                         <p>
-                          {app.applicant_name} applied to you on {" "}
-                          {new Date(app.created_at).toLocaleDateString()}.
+                          {app.applicant_name ? app.applicant_name : "Someone"} applied to you!
                         </p>
-                        <span className="block text-sm text-gray-600 mb-2">Status: {app.status}</span>
+                        <span className="block text-sm text-gray-600 mb-2">Status: {prettyPrintStatus(app.status)}</span>
                         {app.gemini_response && (
                           <>
                             <p className="font-semibold mb-1">Interview Summary:</p>
