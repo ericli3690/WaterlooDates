@@ -32,7 +32,19 @@ The Auth0 tenant was configured on the Auth0 Dashboard, and their provided login
 The backend is a Python Flask server. It consists of a custom REST API to enable requests from the frontend to the backend, retreiving information from MongoDB, Ribbon AI, Vellum, and Gemini in the backend.
 
 #### MongoDB Atlas 🍃
-MongoDB Atlas was used to store user data, applications, 
+MongoDB Atlas was used to store user data, applications, rizz-umes, etc.
 
-#### AI
+### AI
+We integrated multiple AI tools into our project:
 
+#### Ribbon.AI
+This was the cool out-of-the-box tool for creating voice AI interviews. We tried using it in a new way by making it help us with relationship candidate vetting! The system prompt told it about it's task of being a relationship wingman and the API took it from there.
+
+#### Vellum.AI
+To create the toolchain of LLM calls and scirpts that reads the interview transcript and generates an AI summary and opinion about relationship compatibility, we used Vellum's Workflow SDK:
+![WaterlooDates Screenshot](https://d112y698adiu2z.cloudfront.net/photos/production/software_photos/003/626/843/datas/gallery.jpg)
+
+See our video on [Devpost](https://devpost.com/software/waterloodates) for a close up look!
+
+#### Google Gemini
+The model run by Vellum.AI in the background was a combination of Gemini 1.5 Flash and Gemini 2.5 Flash. ⚡'
