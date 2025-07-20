@@ -4,20 +4,23 @@ import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import path from "path";
 
 interface Application {
-    applicantId: string;
-    recipientId: string;
-    applicantName: string;
-    recipientName: string;
-    status: string;
-    createdAt: string;
-    applicationId: string;
+    _id: string;
+    applicant_user_id: string;
+    interviewer_user_id: string;
+    status: number;
+    interview_id: string;
+    interview_link: string;
+    audio_url: string;
+    transcript: string;
+    gemini_response: any;
+    interviewer_decision: string;
 }
 
 interface UserData {
     name: string;
     email: string;
-    rizzumeCreated: boolean;
-    wingmanCreated: boolean;
+    rizzume_created: boolean;
+    wingman_created: boolean;
     picture?: string;
     nickname?: string;
 }
@@ -26,11 +29,11 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
     const [userData, setUserData] = useState<UserData | null>({
         name: 'andrew',
         email: 'andrew@example.com',
-        rizzumeCreated: true,
-        wingmanCreated: true,
+        rizzume_created: true,
+        wingman_created: true,
     });
-    const [outgoingApplications, setOutgoingApplications] = useState<Application[]>([{ applicantId: '1', recipientId: '2', applicantName: 'Andrew', recipientName: 'Bob', status: 'pending', createdAt: '2023-01-01', applicationId: 'app1' }]);
-    const [incomingApplications, setIncomingApplications] = useState<Application[]>([{ applicantId: '2', recipientId: '1', applicantName: 'Bob', recipientName: 'Andrew', status: 'accepted', createdAt: '2023-01-02', applicationId: 'app2' }]);
+    const [outgoingApplications, setOutgoingApplications] = useState<Application[]>([]);
+    const [incomingApplications, setIncomingApplications] = useState<Application[]>([]);
     const [activeTab, setActiveTab] = useState<'outgoing' | 'incoming'>('outgoing');
     const hasInitialized = useRef(false);
 
@@ -49,16 +52,36 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                 .then((data) => {
                     setUserData(data);
 
-                    if (data.rizzumeCreated) {
-                        fetch(`${process.env.NEXT_PUBLIC_API_URL}/applications/outgoing`)
+                    if (data.rizzume_created) {
+                        fetch("http://127.0.0.1:5000/api/get_applications_for_applicant_and_update_status", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ user_id: user.sub }),
+                        })
                             .then((res) => res.json())
-                            .then(setOutgoingApplications)
+                            .then((data) => {
+                                if (data.success) {
+                                    setOutgoingApplications(data.applications || []);
+                                }
+                            })
                             .catch(console.error);
 
-                        if (data.wingmanCreated) {
-                            fetch(`${process.env.NEXT_PUBLIC_API_URL}/applications/incoming`)
+                        if (data.wingman_created) {
+                            fetch("http://127.0.0.1:5000/api/get_applications_for_interviewer_and_update_status", {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ user_id: user.sub }),
+                            })
                                 .then((res) => res.json())
-                                .then(setIncomingApplications)
+                                .then((data) => {
+                                    if (data.success) {
+                                        setIncomingApplications(data.applications || []);
+                                    }
+                                })
                                 .catch(console.error);
                         }
                     }
@@ -87,19 +110,19 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                     <p><span className="font-semibold">Nickname:</span> {user?.nickname}</p>
                 </div>
 
-                {(userData && (!userData.rizzumeCreated || !userData.wingmanCreated)) && (
+                {(userData && (!userData.rizzume_created || !userData.wingman_created)) && (
                     <div className="mb-6 space-y-3">
-                        {!userData.rizzumeCreated && (
+                        {!userData.rizzume_created && (
                             <a
-                                href="/create-rizzume"
+                                href="/make-rizzume"
                                 className="block bg-[#ff76e8] hover:bg-pink-400 text-black font-medium py-2 px-4 rounded"
                             >
                                 Create Your Rizzumé
                             </a>
                         )}
-                        {!userData.wingmanCreated && (
+                        {!userData.wingman_created && (
                             <a
-                                href="/create-wingman"
+                                href="/make-wingman"
                                 className="block bg-[#ffda23] hover:bg-yellow-400 text-black font-medium py-2 px-4 rounded"
                             >
                                 Add a Wingman
@@ -108,7 +131,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                     </div>
                 )}
 
-                {(userData?.rizzumeCreated && userData?.wingmanCreated) && (
+                {(userData?.rizzume_created && userData?.wingman_created) && (
                     <div className="mt-8">
                         <div className="flex space-x-4 mb-6">
                             <button
@@ -127,23 +150,51 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
 
                         {activeTab === 'outgoing' && (
                             <ul className="space-y-2">
-                                {outgoingApplications.map((app, idx) => (
-                                    <li key={idx} className="p-4 bg-white text-black border border-yellow-300 rounded-xl shadow">
-                                        You applied to {app.recipientName} on {new Date(app.createdAt).toLocaleDateString()}.
-                                        <span className="block text-sm text-gray-600">Status: {app.status}</span>
+                                {outgoingApplications.length === 0 ? (
+                                    <li className="p-4 bg-white text-black border border-yellow-300 rounded-xl shadow text-center text-gray-500">
+                                        No outgoing applications yet. Go apply to someone!
                                     </li>
-                                ))}
+                                ) : (
+                                    outgoingApplications.map((app, idx) => (
+                                        <li key={idx} className="p-4 bg-white text-black border border-yellow-300 rounded-xl shadow">
+                                            Application to user {app.interviewer_user_id}
+                                            <span className="block text-sm text-gray-600">
+                                                Status: {app.status === 0 ? 'Created' : app.status === 1 ? 'In Progress' : 'Completed'}
+                                            </span>
+                                            {app.interview_link && (
+                                                <a href={app.interview_link} target="_blank" rel="noopener noreferrer" 
+                                                   className="text-blue-500 hover:underline block text-sm">
+                                                    Interview Link
+                                                </a>
+                                            )}
+                                        </li>
+                                    ))
+                                )}
                             </ul>
                         )}
 
                         {activeTab === 'incoming' && (
                             <ul className="space-y-2">
-                                {incomingApplications.map((app, idx) => (
-                                    <li key={idx} className="p-4 bg-white text-black border border-yellow-300 rounded-xl shadow">
-                                        {app.applicantName} applied to you on {new Date(app.createdAt).toLocaleDateString()}.
-                                        <span className="block text-sm text-gray-600">Status: {app.status}</span>
+                                {incomingApplications.length === 0 ? (
+                                    <li className="p-4 bg-white text-black border border-yellow-300 rounded-xl shadow text-center text-gray-500">
+                                        No incoming applications yet.
                                     </li>
-                                ))}
+                                ) : (
+                                    incomingApplications.map((app, idx) => (
+                                        <li key={idx} className="p-4 bg-white text-black border border-yellow-300 rounded-xl shadow">
+                                            Application from user {app.applicant_user_id}
+                                            <span className="block text-sm text-gray-600">
+                                                Status: {app.status === 0 ? 'Created' : app.status === 1 ? 'In Progress' : 'Completed'}
+                                            </span>
+                                            {app.interview_link && (
+                                                <a href={app.interview_link} target="_blank" rel="noopener noreferrer" 
+                                                   className="text-blue-500 hover:underline block text-sm">
+                                                    Interview Link
+                                                </a>
+                                            )}
+                                        </li>
+                                    ))
+                                )}
                             </ul>
                         )}
                     </div>
