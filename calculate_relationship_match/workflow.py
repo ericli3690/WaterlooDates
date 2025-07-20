@@ -26,6 +26,7 @@ class Workflow(BaseWorkflow[Inputs, BaseState]):
         GetQuestionsAndAnswers >> Opinion,
         Summarize >> FinalOutput,
     }
+    print("GRAPH: ", graph)
 
     class Outputs(BaseWorkflow.Outputs):
         confidence = Confidence.Outputs.value
