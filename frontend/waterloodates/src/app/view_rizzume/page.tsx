@@ -120,6 +120,7 @@ export default withPageAuthRequired(function ViewRizzumePage({ user }) {
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {profiles.map((profile) => (
+            profile.user_id === user.sub ? null : (
             <button
               key={profile.user_id}
               className="group flex flex-col items-center p-6 border-2 border-gray-200 rounded-lg shadow-md hover:shadow-lg hover:border-blue-300 transition-all duration-200 bg-white hover:cursor-pointer"
@@ -144,7 +145,7 @@ export default withPageAuthRequired(function ViewRizzumePage({ user }) {
                 {profile.job.currentjob}
               </span>
             </button>
-          ))}
+          )))}
         </div>
       )}
 
