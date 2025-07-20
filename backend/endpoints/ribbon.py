@@ -154,7 +154,7 @@ def create_or_update_interview():
         existing_application["transcript"] = ""
         existing_application["question_to_transcript_mapping"] = {}
         existing_application["gemini_response"] = {}
-        existing_application["interviewer_decision"] = ""
+        existing_application["interviewer_decision"] = 0
         applications_collection.update_one({"applicant_user_id": applicant_user_id, "interviewer_user_id": interviewer_user_id}, {"$set": existing_application})
         return jsonify({"success": True, "interview_link": interview_link}), 200
     except Exception as e:
