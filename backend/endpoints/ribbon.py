@@ -105,7 +105,7 @@ def create_or_update_interview():
         # last_name = data.get('last_name')
         
         if not applicant_user_id or not interviewer_user_id:
-            return jsonify({"success": False, "error": "applicant_user_id and interviewer_user_id are required"}), 400
+            return jsonify({"success": False, "interview_link": "", "error": "applicant_user_id and interviewer_user_id are required"}), 400
         # print("CHECK 1")
         existing_applicant_user = user_collection.find_one({"user_id": applicant_user_id})
         existing_interviewer_user = user_collection.find_one({"user_id": interviewer_user_id})
@@ -115,7 +115,7 @@ def create_or_update_interview():
         existing_application = applications_collection.find_one({"applicant_user_id": applicant_user_id, "interviewer_user_id": interviewer_user_id})
         # print("CHECK 2")
         if not existing_application or not existing_applicant_user or not existing_interviewer_user or not existing_wingman or not existing_applicant_rizzume or not existing_interviewer_rizzume:
-            return jsonify({"success": False, "error": "create or update interview smth is cooked"}), 400
+            return jsonify({"success": False, "interview_link": "", "error": "create or update interview smth is cooked"}), 400
         # print("CHECK 3")
         flow_id = existing_wingman["interview_flow_id"]
         applicant_first_name = existing_applicant_rizzume["profile"]["name"]["first"]
@@ -156,9 +156,9 @@ def create_or_update_interview():
         existing_application["gemini_response"] = {}
         existing_application["interviewer_decision"] = ""
         applications_collection.update_one({"applicant_user_id": applicant_user_id, "interviewer_user_id": interviewer_user_id}, {"$set": existing_application})
-        return jsonify({"success": True, "message": f"interview created! interview_link: {interview_link}"}), 200
+        return jsonify({"success": True, "interview_link": interview_link}), 200
     except Exception as e:
-        return jsonify({"success": False, "error": str(e)})
+        return jsonify({"success": False, "interview_link": "", "error": str(e)})
 
 # DON'T INCLUDE THIS AS ROUTE, THIS IS HELPER FUNCTION
 def check_and_update_processed_interview(interview_id):
@@ -223,6 +223,12 @@ def check_and_update_processed_interview(interview_id):
             if not applicant_rizzume or not interviewer_rizzume or not audio_url or not transcript or not question_to_transcript_mapping:
                 return jsonify({"success": False, "error": "audio_url, transcript, and question_to_transcript_mapping are required"}), 400
             print("GREEN FN")
+            
+            applicant_rizzume["_id"] = str(applicant_rizzume["_id"])
+            interviewer_rizzume["_id"] = str(interviewer_rizzume["_id"])
+            
+            # applicant_rizzume_modified = applicant_rizzume.remove("_id")
+            # interviewer_rizzume_modified = interviewer_rizzume.remove("_id")
             existing_application["audio_url"] = audio_url
             existing_application["transcript"] = transcript
             existing_application["question_to_transcript_mapping"] = question_to_transcript_mapping

@@ -3,75 +3,96 @@ import React, { useEffect, useState, useRef } from "react";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 
 interface Application {
-  applicantId: string;
-  recipientId: string;
-  applicantName: string;
-  recipientName: string;
-  status: string;
-  createdAt: string;
-  applicationId: string;
-  gemini_response?: {
-    summary?: string;
-    opinion?: string;
-    confidence?: number; // 0-100
-  };
+    _id: string;
+    applicant_user_id: string;
+    interviewer_user_id: string;
+    applicant_name: string;
+    recipient_name: string;
+    created_at: string;
+    application_id: string;
+    status: string;
+    interview_id: string;
+    interview_link: string;
+    audio_url: string;
+    transcript: string;
+    gemini_response: any;
+    interviewer_decision: string;
 }
 
 interface UserData {
-  name: string;
-  email: string;
-  rizzumeCreated: boolean;
-  wingmanCreated: boolean;
-  picture?: string;
-  nickname?: string;
+    name: string;
+    email: string;
+    rizzume_created: boolean;
+    wingman_created: boolean;
+    picture?: string;
+    nickname?: string;
 }
 
 export default withPageAuthRequired(function DashboardPage({ user }) {
   const [userData, setUserData] = useState<UserData | null>({
     name: "",
     email: "",
-    rizzumeCreated: true,
-    wingmanCreated: false,
+    rizzume_created: true,
+    wingman_created: false,
   });
   const [outgoingApplications, setOutgoingApplications] = useState<Application[]>([
     {
-      applicantId: "1",
-      recipientId: "2",
-      applicantName: "John Doe",
-      recipientName: "Jane Smith",
+      _id: "1",
+      applicant_user_id: "1",
+      interviewer_user_id: "2",
+      applicant_name: "John Doe",
+      recipient_name: "Jane Smith",
       status: "Pending",
-      createdAt: new Date().toISOString(),
-      applicationId: "app-123",
+      created_at: new Date().toISOString(),
+      application_id: "app-123",
+      interview_id: "",
+      interview_link: "",
+      audio_url: "",
+      transcript: "",
+      gemini_response: null,
+      interviewer_decision: "",
     }
   ]);
   const [incomingApplications, setIncomingApplications] = useState<Application[]>([
     {
-      applicantId: "3",
-      recipientId: "1",
-      applicantName: "Alice Johnson",
-      recipientName: "John Doe",
+      _id: "2",
+      applicant_user_id: "3",
+      interviewer_user_id: "1",
+      applicant_name: "Alice Johnson",
+      recipient_name: "John Doe",
       status: "Completed",
-      createdAt: new Date().toISOString(),
-      applicationId: "app-456",
+      created_at: new Date().toISOString(),
+      application_id: "app-456",
+      interview_id: "",
+      interview_link: "",
+      audio_url: "",
+      transcript: "",
       gemini_response: {
         summary: "Alice was confident and answered all questions thoroughly. She seems genuinely interested and aligns well with your interests.",
         opinion: "Your wingman thinks Alice is a great match and you should definitely consider a date!",
         confidence: 85,
       },
+      interviewer_decision: "",
     },
     {
-      applicantId: "4",
-      recipientId: "1",
-      applicantName: "Bob Smith",
-      recipientName: "John Doe",
+      _id: "3",
+      applicant_user_id: "4",
+      interviewer_user_id: "1",
+      applicant_name: "Bob Smith",
+      recipient_name: "John Doe",
       status: "Completed",
-      createdAt: new Date().toISOString(),
-      applicationId: "app-789",
+      created_at: new Date().toISOString(),
+      application_id: "app-789",
+      interview_id: "",
+      interview_link: "",
+      audio_url: "",
+      transcript: "",
       gemini_response: {
         summary: "Bob seemed a bit nervous and his answers were short. Compatibility might be moderate.",
         opinion: "Wingman recommends another chat to gauge chemistry before committing to a date.",
         confidence: 55,
       },
+      interviewer_decision: "",
     },
   ]);
   const [activeTab, setActiveTab] = useState<"outgoing" | "incoming">("outgoing");
@@ -90,13 +111,13 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
         .then((data) => {
           setUserData(data);
 
-          if (data.rizzumeCreated) {
+          if (data.rizzume_created) {
             fetch(`${process.env.NEXT_PUBLIC_API_URL}/applications/outgoing`)
               .then((res) => res.json())
               .then(setOutgoingApplications)
               .catch(console.error);
 
-            if (data.wingmanCreated) {
+            if (data.wingman_created) {
               // Fetch incoming applications with gemini responses
               fetch("http://127.0.0.1:5000/api/get_applications_for_interviewer_and_update_status", {
                 method: "POST",
@@ -126,7 +147,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
           Welcome, {user?.name || "User"}!
         </h1>
 
-        {userData?.rizzumeCreated && (
+        {userData?.rizzume_created && (
           <a
             href="/search"
             className="absolute top-6 right-6 bg-[#ff76e8] hover:bg-[#ff90ef] text-white font-semibold py-2 px-4 rounded-full shadow-lg transition-all flex items-center group"
@@ -151,9 +172,9 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
         </div>
 
         {/* Create Prompt Buttons */}
-        {(userData && (!userData.rizzumeCreated || !userData.wingmanCreated)) && (
+        {(userData && (!userData.rizzume_created || !userData.wingman_created)) && (
           <div className="mb-6 space-y-3">
-            {!userData.rizzumeCreated && (
+            {!userData.rizzume_created && (
               <a
                 href="/rizzume"
                 className="block bg-[#ff76e8] hover:bg-pink-400 text-black font-medium py-2 px-4 rounded"
@@ -161,7 +182,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                 Create Your Rizzumé
               </a>
             )}
-            {!userData.wingmanCreated && (
+            {!userData.wingman_created && (
               <a
                 href="/wingman"
                 className="block bg-[#ffda23] hover:bg-yellow-400 text-black font-medium py-2 px-4 rounded"
@@ -173,7 +194,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
         )}
 
         {/* Tabs for Applications */}
-        {userData?.rizzumeCreated && (
+        {userData?.rizzume_created && (
           <div className="mt-8">
             <div className="flex space-x-4 mb-6">
               <button
@@ -187,7 +208,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                 Outgoing Applications
               </button>
 
-              {userData.wingmanCreated && (
+              {userData.wingman_created && (
                 <button
                   onClick={() => setActiveTab("incoming")}
                   className={`py-2 px-4 rounded font-medium ${
@@ -209,8 +230,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                     key={idx}
                     className="p-4 bg-white text-black border border-yellow-300 rounded-xl shadow"
                   >
-                    You applied to {app.recipientName} on{" "}
-                    {new Date(app.createdAt).toLocaleDateString()}.
+                    You applied to {app.interviewer_user_id}!
                     <span className="block text-sm text-gray-600">
                       Status: {app.status}
                     </span>
@@ -220,7 +240,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
             )}
 
             {/* Incoming (only if wingman exists) */}
-            {activeTab === "incoming" && userData.wingmanCreated && (
+            {activeTab === "incoming" && userData.wingman_created && (
               <ul className="space-y-2">
                 {incomingApplications.map((app, idx) => {
                   const conf = app.gemini_response?.confidence ?? 0;
@@ -234,8 +254,8 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                     >
                       <div className="pr-4 flex-1">
                         <p>
-                          {app.applicantName} applied to you on {" "}
-                          {new Date(app.createdAt).toLocaleDateString()}.
+                          {app.applicant_name} applied to you on {" "}
+                          {new Date(app.created_at).toLocaleDateString()}.
                         </p>
                         <span className="block text-sm text-gray-600 mb-2">Status: {app.status}</span>
                         {app.gemini_response && (

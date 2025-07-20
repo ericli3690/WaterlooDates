@@ -17,6 +17,31 @@ wingman_collection = db['wingman']
 applications_collection = db['applications']
 rizzume_collection = db['rizzume']
 
+def check_has_rizzume(user_id):
+    if not user_id:
+        return False
+    existing_user = user_collection.find_one({"user_id": user_id})
+    if not existing_user:
+        return False
+    if existing_user["rizzume_created"] == False:
+        return False
+    existing_rizzume = rizzume_collection.find_one({"user_id": user_id})
+    if not existing_rizzume:
+        return False
+    return True
+
+def check_has_wingman(user_id):
+    if not user_id:
+        return False
+    existing_user = user_collection.find_one({"user_id": user_id})
+    if not existing_user:
+        return False
+    if existing_user["wingman_created"] == False:
+        return False
+    existing_wingman = wingman_collection.find_one({"user_id": user_id})
+    if not existing_wingman:
+        return False
+    return True
 
 # POST
 def create_application():
@@ -34,6 +59,12 @@ def create_application():
         existing_interviewer = user_collection.find_one({"user_id": interviewer_user_id})
         if not existing_interviewer:
             return jsonify({"success": False, "error": "interviewer doesn't exist"}), 400
+        
+        if not check_has_rizzume(applicant_user_id) or not check_has_rizzume(interviewer_user_id):
+            return jsonify({"success": False, "error": "rizzume doesn't exist"}), 400
+        
+        if not check_has_wingman(interviewer_user_id):
+            return jsonify({"success": False, "error": "wingman doesn't exist"}), 400
         
         existing_application = applications_collection.find_one({"applicant_user_id": applicant_user_id, "interviewer_user_id": interviewer_user_id})
         if not existing_application:
