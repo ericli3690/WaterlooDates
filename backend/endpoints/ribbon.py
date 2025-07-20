@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import os
 from flask import jsonify, request
 from pymongo import MongoClient
+from endpoints.gemini_via_vellum import get_wingman_opinion
 
 client = MongoClient(os.getenv("MONGODB_URI"))
 db = client["WaterlooDates"]
@@ -36,7 +37,7 @@ def create_or_update_interview_flow():
     try:
         data = request.get_json()
         user_id = data.get('user_id')
-        questions = data.get('questions', [])
+        questions_and_desired_answers = data.get('questions_and_desired_answers')
         
         if not user_id:
             return jsonify({"success": False, "error": "user doesn't exist"}), 400
@@ -46,6 +47,10 @@ def create_or_update_interview_flow():
 
         ribbon_url = "https://app.ribbon.ai/be-api/v1/interview-flows"
 
+        questions = []
+        for item in questions_and_desired_answers:
+            questions.append(item["question"])
+        
         payload = {
             "org_name": "waterloo-dates",
             "title": user_id,
@@ -71,7 +76,7 @@ def create_or_update_interview_flow():
         store_data = {
             "user_id": user_id,
             "interview_flow_id": interview_flow_id,
-            "questions": questions
+            "questions_and_desired_answers": questions_and_desired_answers
         }
         
         # Check if wingman already exists
@@ -151,13 +156,9 @@ def create_or_update_interview():
         existing_application["gemini_response"] = {}
         existing_application["interviewer_decision"] = ""
         applications_collection.update_one({"applicant_user_id": applicant_user_id, "interviewer_user_id": interviewer_user_id}, {"$set": existing_application})
-        return jsonify({"success": True, "message": "interview created"}), 200
+        return jsonify({"success": True, "message": f"interview created! interview_link: {interview_link}"}), 200
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
-    
-# TODO: REPLACE WHEN ERIC IS DONE
-def gemini_response(applicant_rizzume, interviewer_rizzume, transcript, question_to_transcript_mapping):
-    return {}
 
 # DON'T INCLUDE THIS AS ROUTE, THIS IS HELPER FUNCTION
 def check_and_update_processed_interview(interview_id):
@@ -175,6 +176,14 @@ def check_and_update_processed_interview(interview_id):
         
         applicant_user_id = existing_application["applicant_user_id"]
         interviewer_user_id = existing_application["interviewer_user_id"]
+        
+        wingman = wingman_collection.find_one({"user_id": interviewer_user_id})
+        if not wingman:
+            return jsonify({"success": False, "error": "wingman doesn't exist"}), 400
+        
+        questions_and_desired_answers = wingman["questions_and_desired_answers"]
+        if not questions_and_desired_answers:
+            return jsonify({"success": False, "error": "questions_and_desired_answers doesn't exist"}), 400
         
         status = existing_application["status"]
         if not status:
@@ -196,30 +205,41 @@ def check_and_update_processed_interview(interview_id):
         print("response: ", response.json())
         response = response.json()
         ribbon_status = response["status"]
+        print("ribbon_status: ", ribbon_status)
         if not ribbon_status:
             return jsonify({"success": False, "error": "ribbon status is required"}), 400
-        
+        print("HELOLOLOLOLOLOL")
         if ribbon_status == "incomplete":
             return jsonify({"success": True, "message": "interview is incomplete"}), 200
-        elif ribbon_status == "complete":
-            audio_url = response["audio_url"]
-            transcript = response["transcript"]
-            question_to_transcript_mapping = response["question_to_transcript_mapping"]
+        elif ribbon_status == "completed":
+            print("START COMPLETE")
+            interview_data = response["interview_data"]
+            audio_url = interview_data["audio_url"]
+            transcript = interview_data["transcript"]
+            question_to_transcript_mapping = interview_data["questions_to_transcript_mapping"]
             applicant_rizzume = rizzume_collection.find_one({"user_id": applicant_user_id})
             interviewer_rizzume = rizzume_collection.find_one({"user_id": interviewer_user_id})
-            
+            print("INTERVIEW PROCESS COMPLEDED WAHOO")
             if not applicant_rizzume or not interviewer_rizzume or not audio_url or not transcript or not question_to_transcript_mapping:
                 return jsonify({"success": False, "error": "audio_url, transcript, and question_to_transcript_mapping are required"}), 400
-            
+            print("GREEN FN")
             existing_application["audio_url"] = audio_url
             existing_application["transcript"] = transcript
             existing_application["question_to_transcript_mapping"] = question_to_transcript_mapping
             existing_application["status"] = 2
-            
+            print("ANDREW JIANG")
             # PASS TRANSCRIPT AND QUESTION TO TRANSCRIPT MAPPING TO GEMINI
-            gemini_response = gemini_response(applicant_rizzume, interviewer_rizzume, transcript, question_to_transcript_mapping)
-            existing_application["gemini_response"] = gemini_response
+            summary, opinion, confidence = get_wingman_opinion(transcript, question_to_transcript_mapping, questions_and_desired_answers, applicant_rizzume, interviewer_rizzume)
+            # gemini_response = {}
+            print("GEMINI RESPONSE: ", summary, opinion, confidence)
+            existing_application["gemini_response"] = {
+                "summary": summary,
+                "opinion": opinion,
+                "confidence": confidence
+            }
+            print("UPDATE APPLICATION GEMINI")
             applications_collection.update_one({"interview_id": interview_id}, {"$set": existing_application})
+            print("EXTRA GREEN FN")
             return jsonify({"success": True, "message": "interview has been processed"}), 200
         else:
             return jsonify({"success": False, "message": "status is fucked"}), 200

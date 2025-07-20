@@ -1,5 +1,5 @@
 {
     "user_id": "string",
     "interview_flow_id": "string",
-    "questions": []
+    "questions_and_desired_answers": {}
 }
