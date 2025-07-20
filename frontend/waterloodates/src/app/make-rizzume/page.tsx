@@ -1,11 +1,13 @@
 'use client'
 
 import { useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import RizzumeForm, { RizzumeFormRef } from '@/components/RizzumeForm'
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 
 export default withPageAuthRequired(function MakeRizzumePage({ user }: { user: any }) {
     const formRef = useRef<RizzumeFormRef>(null)
+    const router = useRouter()
 
     const handleFormSubmit = async (formData: any) => {
         try {
@@ -21,8 +23,8 @@ export default withPageAuthRequired(function MakeRizzumePage({ user }: { user: a
             
             if (res.ok) {
                 alert('Rizzumé submitted successfully!');
-                // Optionally redirect or clear form
-                window.location.reload(); // This will clear the form
+                // Redirect to dashboard
+                router.push('/dashboard');
             } else {
                 const errorData = await res.json();
                 alert(`Failed to submit rizzumé: ${errorData.message || 'Please try again.'}`);

@@ -60,7 +60,8 @@ const RizzumeForm = forwardRef<RizzumeFormRef, RizzumeFormProps>(({ onSubmit, on
                 age: rawData.age ? parseInt(rawData.age as string) : null,
                 sexuality: rawData.sexuality || '',
                 gender: rawData.gender || '',
-                pfp_url: uploadedImageId || 'y1nklwuj9npfrkjzpxos'
+                pfp_url: uploadedImageId || 'y1nklwuj9npfrkjzpxos',
+                socials: rawData.socials || ''
             },
             job: {
                 workterm: rawData.workterm ? parseInt(rawData.workterm as string) : null,
@@ -328,6 +329,20 @@ const RizzumeForm = forwardRef<RizzumeFormRef, RizzumeFormProps>(({ onSubmit, on
                                 placeholder={viewMode ? '' : "Is there anything you can't have in a partner?"}
                             />
                         </div>
+
+                        {/* Socials - Only show in edit mode */}
+                        {!viewMode && (
+                            <div className="flex items-center gap-4">
+                                <label className="font-semibold min-w-fit text-black">SOCIALS:</label>
+                                <input
+                                    name="socials"
+                                    defaultValue={initialData?.profile?.socials || ''}
+                                    className="flex-1 border-b border-black bg-transparent outline-none pb-1 text-black placeholder-gray-500"
+                                    placeholder="Tell us some of your socials!"
+                                />
+                            </div>
+                        )}
+
                     </div>
                 </div>
             </form>
