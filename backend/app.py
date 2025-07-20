@@ -10,7 +10,7 @@ from datetime import datetime
 from endpoints.user import health, create_or_get_user
 from endpoints.rizzume import create_or_upload_rizzume, get_user_rizzume, get_all_rizzumes
 from endpoints.ribbon import ping_ribbon, create_or_update_interview_flow, create_or_update_interview, get_all_interviews
-from endpoints.application import create_application, update_application, get_applications_for_interviewer_and_update_status, get_applications_for_applicant_and_update_status
+from endpoints.application import create_application, update_application, get_applications_for_interviewer_and_update_status, get_applications_for_applicant_and_update_status, update_interviewer_decision
 
 load_dotenv()
 
@@ -44,6 +44,7 @@ app.route('/api/update_application', methods=['POST'])(update_application)
 app.route('/api/get_applications_for_interviewer_and_update_status', methods=['POST'])(get_applications_for_interviewer_and_update_status)
 app.route('/api/get_applications_for_applicant_and_update_status', methods=['POST'])(get_applications_for_applicant_and_update_status)
 app.route('/api/get_all_interviews', methods=['GET'])(get_all_interviews)
+app.route('/api/update_interviewer_decision', methods=['POST'])(update_interviewer_decision)
 
 @app.route('/')
 def home():
