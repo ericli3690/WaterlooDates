@@ -1,11 +1,12 @@
 # WaterlooDates
 This project was created for and submitted to Hack the 6ix 2025 by Andrew, Andrew, Dylan, and Eric. 6️⃣
-See [Devpost](https://devpost.com/software/waterloodates) for more info!
+
+See **[Devpost](https://devpost.com/software/waterloodates)** for more info!
 
 ## Setup
 Clone the repository onto your local machine. For the frontend, be sure to `cd` into `frontend/waterloodates`. This is the root directory of the Next.js app. Then, run `npm install` to acquire the necessary Node modules to run the app. Moreover, to have Auth0 running, you will want to follow this guide: https://auth0.com/docs/quickstart/webapp/nextjs/01-login. Once that's done, you are ready to get up and running! Simply enter `npm run dev` to start the development server!
 
-For the backend, set up the `.env` file in the root level of the project containing the Vellum API key and MongoDB URI. Create a python virtual environment by doing `python -m venv venv`, do `venv/Scripts/activate` to activate it, then do `pip install -r requirements.txt` to install the dependencies. To run the backend server, create a separate terminal from the frontend, and run `python backend/app.py` to start the flask server.
+For the backend, set up the `.env` file in the root level of the project containing the RIBBON_TOKEN, GEMINI_TOKEN, and VELLUM_TOKEN API keys. Run `export VELLUM_API_KEY=...` to set your Vellum API key, too. Create a python virtual environment by doing `python -m venv venv`, do `venv/Scripts/activate` to activate it, then do `pip install -r requirements.txt` to install the dependencies. To run the backend server, create a separate terminal from the frontend, and run `python backend/app.py` to start the flask server.
 
 ## What is WaterlooDates?
 WaterlooDates is inspired by Waterloo's notorious co-op board: WaterlooWorks. 💵
