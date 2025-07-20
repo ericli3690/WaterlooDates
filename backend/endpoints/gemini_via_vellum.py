@@ -1,3 +1,6 @@
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 import calculate_relationship_match.workflow as workflow
 from calculate_relationship_match.inputs import Inputs
 
@@ -16,6 +19,11 @@ def get_wingman_opinion(
     applicant_rizzume: dict,
     interviewer_rizzume: dict
 ) -> tuple[str, str, float]:
+    print("TRANSCRIPT: ", transcript)
+    print("QUESTIONS TO TRANSCRIPT MAPPING: ", questions_to_transcript_mapping)
+    print("QUESTIONS AND DESIRED ANSWERS: ", questions_and_desired_answers)
+    print("APPLICANT RIZZUME: ", applicant_rizzume)
+    print("INTERVIEWER RIZZUME: ", interviewer_rizzume)
     output = workflow.Workflow().run(
         inputs=Inputs(
             transcript=transcript,
@@ -26,4 +34,5 @@ def get_wingman_opinion(
         )
     ).outputs
     summary = output.final_output
+    print("SUMMARY: ", summary)
     return summary, output.opinion, output.confidence
