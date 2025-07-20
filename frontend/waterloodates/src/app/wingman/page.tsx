@@ -36,21 +36,12 @@ export default withPageAuthRequired(function WingmanPage({ user }) {
     <div className="bg-[#664e5b] min-h-screen flex items-center justify-center px-4">
       <div className="bg-white border border-yellow-400 rounded-2xl shadow-2xl p-10 max-w-2xl w-full text-center">
         <h1 className="text-4xl font-bold mb-4 text-[#ff76e8]">Your Wingman</h1>
-        <p className="text-gray-700 mb-3">
-          Your Wingman is your AI-powered interview assistant that helps you conduct meaningful conversations with potential matches.
-        </p>
-        <p className="text-gray-700 mb-3">
-          It asks thoughtful questions, analyzes responses, and provides insights to help you make informed decisions about compatibility.
-        </p>
-        <p className="text-gray-700 mb-8">
-          Let your Wingman guide you through engaging interviews and discover deeper connections beyond surface-level attraction.
+        <p className="text-gray-700 mb-3 mb-8">
+          Wingman is an AI-powered interview assistant that helps you vet potential matches! Tell it what questions you want to ask and it'll come back with audio responses you can listen back to.
         </p>
 
         {wingmanCreated ? (
           <div>
-            <p className="text-green-600 font-semibold mb-4 text-lg">
-              Your Wingman is ready to help you interview candidates!
-            </p>
             <a
               href="/make-wingman"
               className="inline-block bg-[#ffda23] hover:bg-[#ffce00] text-black font-semibold py-3 px-6 rounded-full shadow transition duration-300"
