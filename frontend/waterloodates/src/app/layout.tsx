@@ -12,7 +12,7 @@ const outfit = Outfit({
 
 export const metadata: Metadata = {
   title: "Waterloo Dates",
-  description: "Never fade when a match is made!",
+  description: "Looking for soulmates? Use WaterlooDates.",
 };
 
 export default function RootLayout({

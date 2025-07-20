@@ -78,7 +78,7 @@ def create_application():
                 "question_to_transcript_mapping": {},
                 "transcript": "",
                 "gemini_response": {},
-                "interviewer_decision": ""
+                "interviewer_decision": 0
             }
             applications_collection.insert_one(new_application)
             return jsonify({"success": True, "message": "application created"}), 200
@@ -225,6 +225,33 @@ def get_applications_for_applicant_and_update_status():
             app["_id"] = str(app["_id"])
         
         return jsonify({"success": True, "applications": completed_applications}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+    
+def update_interviewer_decision():
+    try:
+        data = request.get_json()
+        applicant_user_id = data["applicant_user_id"]
+        interviewer_user_id = data["interviewer_user_id"]
+        decision = data["interviewer_decision"]
+        
+        if decision not in [0, 1, 2]:
+            return jsonify({"success": False, "error": "decision is not 0, 1, or 2"}), 400
+        
+        if not applicant_user_id or not interviewer_user_id:
+            return jsonify({"success": False, "error": "applicant_user_id and interviewer_user_id are required"}), 400
+        
+        existing_application = applications_collection.find_one({"applicant_user_id": applicant_user_id, "interviewer_user_id": interviewer_user_id})
+        if not existing_application:
+            return jsonify({"success": False, "error": "application doesn't exist"}), 400
+        
+        status = existing_application["status"]
+        if status != 2:
+            return jsonify({"success": False, "error": "status is not 2"}), 400
+        
+        existing_application["interviewer_decision"] = decision
+        applications_collection.update_one({"applicant_user_id": applicant_user_id, "interviewer_user_id": interviewer_user_id}, {"$set": existing_application})
+        return jsonify({"success": True, "message": "interviewer decision updated to " + str(decision)}), 200
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
     

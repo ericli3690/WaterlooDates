@@ -11,7 +11,7 @@ export default function Home() {
       </h1>
 
       <p className="text-2xl text-gray-300 mb-8">
-        Never fade when a match is made!
+        Looking for soulmates? Use WaterlooDates.
       </p>
       <LoginButton />
     </main>

@@ -7,7 +7,11 @@ interface Application {
     _id: string;
     applicant_user_id: string;
     interviewer_user_id: string;
-    status: number;
+    applicant_name: string;
+    recipient_name: string;
+    created_at: string;
+    application_id: string;
+    status: string;
     interview_id: string;
     interview_link: string;
     audio_url: string;
@@ -19,9 +23,74 @@ interface Application {
 
 
 export default withPageAuthRequired(function DashboardPage({ user }) {
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [outgoingApplications, setOutgoingApplications] = useState<Application[]>([]);
-  const [incomingApplications, setIncomingApplications] = useState<Application[]>([]);
+
+  const [userData, setUserData] = useState<UserData | null>({
+    name: "",
+    email: "",
+    rizzume_created: true,
+    wingman_created: false,
+  });
+  const [outgoingApplications, setOutgoingApplications] = useState<Application[]>([
+    {
+      _id: "1",
+      applicant_user_id: "1",
+      interviewer_user_id: "2",
+      applicant_name: "John Doe",
+      recipient_name: "Jane Smith",
+      status: "Pending",
+      created_at: new Date().toISOString(),
+      application_id: "app-123",
+      interview_id: "",
+      interview_link: "",
+      audio_url: "",
+      transcript: "",
+      gemini_response: null,
+      interviewer_decision: "",
+    }
+  ]);
+  const [incomingApplications, setIncomingApplications] = useState<Application[]>([
+    {
+      _id: "2",
+      applicant_user_id: "3",
+      interviewer_user_id: "1",
+      applicant_name: "Alice Johnson",
+      recipient_name: "John Doe",
+      status: "Completed",
+      created_at: new Date().toISOString(),
+      application_id: "app-456",
+      interview_id: "",
+      interview_link: "",
+      audio_url: "",
+      transcript: "",
+      gemini_response: {
+        summary: "Alice was confident and answered all questions thoroughly. She seems genuinely interested and aligns well with your interests.",
+        opinion: "Your wingman thinks Alice is a great match and you should definitely consider a date!",
+        confidence: 85,
+      },
+      interviewer_decision: "",
+    },
+    {
+      _id: "3",
+      applicant_user_id: "4",
+      interviewer_user_id: "1",
+      applicant_name: "Bob Smith",
+      recipient_name: "John Doe",
+      status: "Completed",
+      created_at: new Date().toISOString(),
+      application_id: "app-789",
+      interview_id: "",
+      interview_link: "",
+      audio_url: "",
+      transcript: "",
+      gemini_response: {
+        summary: "Bob seemed a bit nervous and his answers were short. Compatibility might be moderate.",
+        opinion: "Wingman recommends another chat to gauge chemistry before committing to a date.",
+        confidence: 55,
+      },
+      interviewer_decision: "",
+    },
+  ]);
+
   const [activeTab, setActiveTab] = useState<"outgoing" | "incoming">("outgoing");
   const hasInitialized = useRef(false);
 
@@ -38,16 +107,25 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
         .then((data) => {
           setUserData(data);
 
-          if (data.rizzumeCreated) {
-            fetch(`${process.env.NEXT_PUBLIC_API_URL}/applications/outgoing`)
+          if (data.rizzume_created) {
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}applications/outgoing`)
               .then((res) => res.json())
               .then(setOutgoingApplications)
               .catch(console.error);
 
-            if (data.wingmanCreated) {
-              fetch(`${process.env.NEXT_PUBLIC_API_URL}/applications/incoming`)
+            if (data.wingman_created) {
+              // Fetch incoming applications with gemini responses
+              fetch("http://127.0.0.1:5000/api/get_applications_for_interviewer_and_update_status", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user_id: user.sub }),
+              })
                 .then((res) => res.json())
-                .then(setIncomingApplications)
+                .then((resp) => {
+                  if (resp && resp.applications) {
+                    setIncomingApplications(resp.applications as Application[]);
+                  }
+                })
                 .catch(console.error);
             }
           }
@@ -57,7 +135,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
   }, [user]);
 
   return (
-    <div className="bg-[#664e5b] min-h-screen px-4 py-6 relative">
+    <div className="bg-[#664e5b] min-h-screen px-4 pt-16 py-6 relative">
 
 
       <div className="bg-white text-black border border-yellow-400 p-6 rounded-2xl shadow-xl max-w-5xl w-full mx-auto mt-12 relative">
@@ -160,17 +238,58 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
             {/* Incoming (only if wingman exists) */}
             {activeTab === "incoming" && userData.wingman_created && (
               <ul className="space-y-2">
-                {incomingApplications.map((app, idx) => (
-                  <li
-                    key={idx}
-                    className="p-4 bg-white text-black border border-yellow-300 rounded-xl shadow"
-                  >
-                    {app.applicant_user_id} applied to you!
-                    <span className="block text-sm text-gray-600">
-                      Status: {app.status}
-                    </span>
-                  </li>
-                ))}
+                {incomingApplications.map((app, idx) => {
+                  const conf = app.gemini_response?.confidence ?? 0;
+                  const strokeDasharray = 2 * Math.PI * 28; // r=28
+                  const strokeDashoffset = strokeDasharray * (1 - conf / 100);
+                  const strokeColor = conf >= 70 ? "#26a69a" : conf >= 40 ? "#ffda23" : "#e03e3e";
+                  return (
+                    <li
+                      key={idx}
+                      className="p-4 bg-white text-black border border-yellow-300 rounded-xl shadow flex justify-between items-start"
+                    >
+                      <div className="pr-4 flex-1">
+                        <p>
+                          {app.applicant_name} applied to you on {" "}
+                          {new Date(app.created_at).toLocaleDateString()}.
+                        </p>
+                        <span className="block text-sm text-gray-600 mb-2">Status: {app.status}</span>
+                        {app.gemini_response && (
+                          <>
+                            <p className="font-semibold mb-1">Interview Summary:</p>
+                            <p className="mb-2 text-sm text-gray-700 whitespace-pre-line">
+                              {app.gemini_response.summary || "N/A"}
+                            </p>
+                            <p className="font-semibold mb-1">Your Wingman's Opinion:</p>
+                            <p className="text-sm text-gray-700 whitespace-pre-line">
+                              {app.gemini_response.opinion || "N/A"}
+                            </p>
+                          </>
+                        )}
+                      </div>
+                      <div className="w-20 h-20 flex items-center justify-center">
+                        <svg width="60" height="60">
+                          <circle cx="30" cy="30" r="28" stroke="#e5e7eb" strokeWidth="4" fill="none" />
+                          <circle
+                            cx="30"
+                            cy="30"
+                            r="28"
+                            stroke={strokeColor}
+                            strokeWidth="4"
+                            fill="none"
+                            strokeDasharray={strokeDasharray}
+                            strokeDashoffset={strokeDashoffset}
+                            strokeLinecap="round"
+                            transform="rotate(-90 30 30)"
+                          />
+                          <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fontSize="12" fill="black">
+                            {conf}%
+                          </text>
+                        </svg>
+                      </div>
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </div>
