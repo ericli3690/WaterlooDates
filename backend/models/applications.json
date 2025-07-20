@@ -8,5 +8,5 @@
     "question_to_transcript_mapping": {},
     "transcript": "",
     "gemini_response": {},
-    "interviewer_decision": "string"
+    "interviewer_decision": 0
 }

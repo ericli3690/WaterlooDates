@@ -7,15 +7,15 @@ from dotenv import load_dotenv
 from datetime import datetime
 
 # Import endpoint functions
-from endpoints.user import health, create_or_get_user
+from endpoints.user import health, create_or_get_user, get_user_socials
 from endpoints.rizzume import create_or_upload_rizzume, get_user_rizzume, get_all_rizzumes
 from endpoints.ribbon import ping_ribbon, create_or_update_interview_flow, create_or_update_interview, get_all_interviews
-from endpoints.application import create_application, update_application, get_applications_for_interviewer_and_update_status, get_applications_for_applicant_and_update_status
+from endpoints.application import create_application, update_application, get_applications_for_interviewer_and_update_status, get_applications_for_applicant_and_update_status, update_interviewer_decision
 
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["http://localhost:3000", "http://127.0.0.1:3000"], supports_credentials=True)
 
 # MongoDB connection
 mongodb_uri = os.getenv('MONGODB_URI')
@@ -44,6 +44,8 @@ app.route('/api/update_application', methods=['POST'])(update_application)
 app.route('/api/get_applications_for_interviewer_and_update_status', methods=['POST'])(get_applications_for_interviewer_and_update_status)
 app.route('/api/get_applications_for_applicant_and_update_status', methods=['POST'])(get_applications_for_applicant_and_update_status)
 app.route('/api/get_all_interviews', methods=['GET'])(get_all_interviews)
+app.route('/api/update_interviewer_decision', methods=['POST'])(update_interviewer_decision)
+app.route('/api/get_user_socials', methods=['POST'])(get_user_socials)
 
 @app.route('/')
 def home():

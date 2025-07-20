@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { UserData } from "@/interfaces/interfaces";
 
 export default withPageAuthRequired(function WingmanPage({ user }) {
   const [wingmanCreated, setWingmanCreated] = useState<boolean>(false);
@@ -21,8 +22,8 @@ export default withPageAuthRequired(function WingmanPage({ user }) {
           body: JSON.stringify(user),
         });
 
-        const data = await res.json();
-        setWingmanCreated(data.wingmanCreated);
+        const data: UserData = await res.json();
+        setWingmanCreated(data.wingman_created);
       } catch (error) {
         console.error("Failed to fetch user data:", error);
       }
