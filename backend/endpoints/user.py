@@ -61,18 +61,21 @@ def create_or_get_user():
 def get_user_socials():
     try:
         data = request.get_json()
+        print("got request: ", data)
         user_id = data["user_id"]
+        print("user_id: ", user_id)
         existing_user = users_collection.find_one({"user_id": user_id})
         if not existing_user:
             return jsonify({"success": False, "error": "user doesn't exist"}), 400
-        
+        print("user exists")
         existing_rizzume = rizzume_collection.find_one({"user_id": user_id})
         if not existing_rizzume:
             return jsonify({"success": False, "error": "rizzume doesn't exist"}), 400
-        
-        existing_socials = existing_rizzume["socials"]
+        print("rizzume exists: ", existing_rizzume)
+        existing_socials = existing_rizzume["profile"]["socials"]
         if not existing_socials:
             return jsonify({"success": False, "error": "rizzume doesn't have socials"}), 400
+        print("rizzume has socials")
         
         return jsonify({"success": True, "socials": existing_socials}), 200
     except Exception as e:
