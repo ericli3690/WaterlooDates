@@ -213,10 +213,10 @@ export default withPageAuthRequired(function ViewRizzumePage({ user }) {
             profile.user_id === user.sub ? null : (
             <button
               key={profile.user_id}
-              className="group flex flex-col items-center p-6 border-2 border-gray-200 rounded-lg shadow-md hover:shadow-lg hover:border-blue-300 transition-all duration-200 bg-white hover:cursor-pointer"
+              className="group flex flex-col items-center p-6 border-2 border-gray-200 rounded-lg shadow-md hover:shadow-lg hover:border-[#FF76E8] transition-all duration-200 bg-white hover:cursor-pointer"
               onClick={() => setSelectedProfile(profile)}
             >
-              <div className="w-20 h-20 mb-3 overflow-hidden rounded-full border-2 border-gray-300 group-hover:border-blue-400 transition-colors">
+              <div className="w-20 h-20 mb-3 overflow-hidden rounded-full border-2 border-gray-300 group-hover:border-[#FF76E8] transition-colors">
                 <img
                   src={profile.profile.pfp_url
                     ? `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'de4d5bkfk'}/image/upload/${profile.profile.pfp_url}`
@@ -228,7 +228,7 @@ export default withPageAuthRequired(function ViewRizzumePage({ user }) {
                   }}
                 />
               </div>
-              <span className="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors text-center">
+              <span className="font-semibold text-gray-800 group-hover:text-[#FF76E8] transition-colors text-center">
                 {profile.profile.name.first} {profile.profile.name.last}
               </span>
               <span className="text-sm text-gray-500 mt-1">
