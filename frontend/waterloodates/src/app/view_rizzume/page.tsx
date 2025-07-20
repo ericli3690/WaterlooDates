@@ -173,27 +173,31 @@ export default withPageAuthRequired(function ViewRizzumePage({ user }) {
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 pt-24 bg-[#5b3e4a]">
         <div className="max-w-4xl mx-auto space-y-6">
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-white">
-              💘 Available Rizzumés
-            </h1>
-            <Button
-              onClick={() => setShowFilterModal(true)}
-              variant="filled"
-              color="gray.1"
-              c="dark"
-              leftSection="🔍"
-            >
-              Filter
-            </Button>
+          <div className="mb-8">
+            <Title order={1} c="white" mb="md" ta="center">
+              Available Rizzumés
+            </Title>
+            <div className="flex justify-between items-center">
+              <div style={{ width: '100px' }}></div>
+              {!loading && (
+                <Text c="gray.3" size="lg" fw={500} ta="center" style={{ flex: 1 }}>
+                  {filteredProfiles.length === 0
+                    ? "No profiles found"
+                    : `Found ${filteredProfiles.length} profile${filteredProfiles.length === 1 ? '' : 's'}...`}
+                </Text>
+              )}
+              <Button
+                onClick={() => setShowFilterModal(true)}
+                variant="filled"
+                color="gray.1"
+                c="dark"
+                leftSection="🔍"
+                style={{ width: '100px' }}
+              >
+                Filter
+              </Button>
+            </div>
           </div>
-          {!loading && (
-            <p className="text-gray-300">
-              {filteredProfiles.length === 0
-                ? "No profiles found"
-                : `Found ${filteredProfiles.length} profile${filteredProfiles.length === 1 ? '' : 's'}...`}
-            </p>
-          )}
         </div>
    
 
