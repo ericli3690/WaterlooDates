@@ -234,6 +234,7 @@ def get_applications_for_applicant_and_update_status():
 def update_interviewer_decision():
     try:
         data = request.get_json()
+        print("DATA", data)
         applicant_user_id = data["applicant_user_id"]
         interviewer_user_id = data["interviewer_user_id"]
         decision = data["interviewer_decision"]
@@ -246,6 +247,7 @@ def update_interviewer_decision():
         
         existing_application = applications_collection.find_one({"applicant_user_id": applicant_user_id, "interviewer_user_id": interviewer_user_id})
         if not existing_application:
+            print("HIIII")
             return jsonify({"success": False, "error": "application doesn't exist"}), 400
         
         status = existing_application["status"]

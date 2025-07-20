@@ -2,31 +2,38 @@
 import React, { useEffect, useState, useRef } from "react";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { UserData } from "@/interfaces/interfaces";
+import { useRouter } from "next/navigation";
 
 interface Application {
-    _id: string;
-    applicant_user_id: string;
-    interviewer_user_id: string;
-    applicant_name: string;
-    recipient_name: string;
-    created_at: string;
-    application_id: string;
-    status: string;
-    interview_id: string;
-    interview_link: string;
-    audio_url: string;
-    transcript: string;
-    gemini_response: any;
-    interviewer_decision: string;
+  _id: string;
+  applicant_user_id: string;
+  interviewer_user_id: string;
+  applicant_name: string;
+  recipient_name: string;
+  created_at: string;
+  application_id: string;
+  status: number;
+  interview_id: string;
+  interview_link: string;
+  audio_url: string;
+  transcript: string;
+  gemini_response: any;
+  interviewer_decision: number;
 }
 
-
+enum InterviewerDecision {
+  PENDING = 0,
+  ACCEPTED = 1,
+  REJECTED = 2
+}
 
 export default withPageAuthRequired(function DashboardPage({ user }) {
 
   const [userData, setUserData] = useState<UserData | null>(null);
   const [outgoingApplications, setOutgoingApplications] = useState<Application[]>([]);
   const [incomingApplications, setIncomingApplications] = useState<Application[]>([]);
+
+  const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<"outgoing" | "incoming">("outgoing");
   const hasInitialized = useRef(false);
@@ -80,9 +87,9 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
     }
   }, [user]);
 
-  const prettyPrintStatus = (status: string) => {
+  const prettyPrintStatus = (status: number) => {
     console.log("status", status);
-    return (status = "1") ? "Processing" : "Completed"
+    return (status == 1) ? "Processing" : "Completed"
   };
 
   return (
@@ -146,11 +153,10 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
             <div className="flex space-x-4 mb-6">
               <button
                 onClick={() => setActiveTab("outgoing")}
-                className={`py-2 px-4 rounded font-medium hover:cursor-pointer ${
-                  activeTab === "outgoing"
+                className={`py-2 px-4 rounded font-medium hover:cursor-pointer ${activeTab === "outgoing"
                     ? "bg-[#ff76e8] text-black"
                     : "bg-gray-200 text-gray-700"
-                }`}
+                  }`}
               >
                 Outgoing Applications
               </button>
@@ -158,11 +164,10 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
               {userData.wingman_created && (
                 <button
                   onClick={() => setActiveTab("incoming")}
-                  className={`py-2 px-4 rounded font-medium hover:cursor-pointer ${
-                    activeTab === "incoming"
+                  className={`py-2 px-4 rounded font-medium hover:cursor-pointer ${activeTab === "incoming"
                       ? "bg-[#ffda23] text-black"
                       : "bg-gray-200 text-gray-700"
-                  }`}
+                    }`}
                 >
                   Incoming Applications
                 </button>
@@ -199,16 +204,37 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                   const strokeDasharray = 2 * Math.PI * 28; // r=28
                   const strokeDashoffset = strokeDasharray * (1 - conf / 100);
                   const strokeColor = conf >= 70 ? "#26a69a" : conf >= 40 ? "#ffda23" : "#e03e3e";
+                  if (app.interviewer_decision === InterviewerDecision.REJECTED) return null;
+
+                  let contactInfo: string = "";
+                  if (app.interviewer_decision === InterviewerDecision.ACCEPTED) {
+                    fetch(`http://localhost:5000/api/get_user_socials`, {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        user_id: app.applicant_user_id,
+                      }),
+                    })
+                      .then((res) => res.json())
+                      .then((data) => {
+                        contactInfo = data;
+                      });
+                  }
                   return (
                     <li
                       key={idx}
-                      className="p-4 bg-white text-black border border-yellow-300 rounded-xl shadow flex justify-between items-start"
+                      className="relative p-4 bg-white text-black border border-yellow-300 rounded-xl shadow flex justify-between items-start"
                     >
                       <div className="pr-4 flex-1">
                         <p>
                           {app.applicant_name ? app.applicant_name : "Someone"} applied to you!
                         </p>
-                        <span className="block text-sm text-gray-600 mb-2">Status: {prettyPrintStatus(app.status)}</span>
+                        <span className="block text-sm text-gray-600 mb-2">
+                          Status: {prettyPrintStatus(app.status)}
+                        </span>
+
                         {app.gemini_response && (
                           <>
                             <p className="font-semibold mb-1">Interview Summary:</p>
@@ -219,17 +245,20 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                             <p className="text-sm text-gray-700 whitespace-pre-line mb-3">
                               {app.gemini_response.opinion || "N/A"}
                             </p>
+
                             {app.audio_url && (
                               <div className="mb-2">
                                 <p className="font-semibold mb-2 text-[#ff76e8]">Listen To Them:</p>
-                                <audio 
-                                  controls 
+                                <audio
+                                  controls
                                   className="w-full h-10 rounded-lg bg-[#ffe0f7] border-2 border-[#ff76e8] focus:outline-none focus:ring-2 focus:ring-[#ff76e8]/50"
-                                  style={{
-                                    '--plyr-color-main': '#ff76e8',
-                                    '--plyr-audio-controls-background': '#ffe0f7',
-                                    '--plyr-audio-control-color': '#ff76e8',
-                                  } as React.CSSProperties}
+                                  style={
+                                    {
+                                      '--plyr-color-main': '#ff76e8',
+                                      '--plyr-audio-controls-background': '#ffe0f7',
+                                      '--plyr-audio-control-color': '#ff76e8',
+                                    } as React.CSSProperties
+                                  }
                                 >
                                   <source src={app.audio_url} type="audio/wav" />
                                   Your browser does not support the audio element.
@@ -238,7 +267,60 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                             )}
                           </>
                         )}
+
+                        {/* Conditional exchange contact if accepted */}
+                        {app.interviewer_decision === InterviewerDecision.ACCEPTED && (
+                          <div className="mt-4">
+                            <p className="font-semibold mb-2">Contact Information:</p>
+                            { contactInfo }
+                          </div>
+                        )}
+
+                        {/* Conditional accept/reject buttons if decision is pending */}
+                        {(app.status === 2 &&app.interviewer_decision === InterviewerDecision.PENDING) && (
+                          <div className="absolute bottom-4 right-4 flex flex-col space-y-2">
+                            <button
+                              className="bg-green-500 cursor-pointer text-white px-3 py-1 rounded-lg shadow hover:bg-green-600"
+                              onClick={() => {
+                                fetch("http://localhost:5000/api/update_interviewer_decision", {
+                                  method: "POST",
+                                  headers: {
+                                    "Content-Type": "application/json",
+                                  },
+                                  body: JSON.stringify({
+                                    "applicant_user_id": app.applicant_user_id,
+                                    "interviewer_user_id": app.interviewer_user_id,
+                                    "interviewer_decision": InterviewerDecision.ACCEPTED,
+                                  }),
+                                });
+                                router.refresh();
+                              }}
+                            >
+                              Accept
+                            </button>
+                            <button
+                              className="bg-red-500 cursor-pointer text-white px-3 py-1 rounded-lg shadow hover:bg-red-600"
+                              onClick={() => {
+                                fetch("http://localhost:5000/api/update_interviewer_decision", {
+                                  method: "POST",
+                                  headers: {
+                                    "Content-Type": "application/json",
+                                  },
+                                  body: JSON.stringify({
+                                    "applicant_user_id": app.applicant_user_id,
+                                    "interviewer_user_id": app.interviewer_user_id,
+                                    "interviewer_decision": InterviewerDecision.REJECTED,
+                                  }),
+                                });
+                                router.refresh();
+                              }}
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        )}
                       </div>
+
                       <div className="w-20 h-20 flex items-center justify-center">
                         <svg width="60" height="60">
                           <circle cx="30" cy="30" r="28" stroke="#e5e7eb" strokeWidth="4" fill="none" />
@@ -254,7 +336,14 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                             strokeLinecap="round"
                             transform="rotate(-90 30 30)"
                           />
-                          <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fontSize="12" fill="black">
+                          <text
+                            x="50%"
+                            y="50%"
+                            dominantBaseline="middle"
+                            textAnchor="middle"
+                            fontSize="12"
+                            fill="black"
+                          >
                             {conf}%
                           </text>
                         </svg>
