@@ -30,13 +30,15 @@ export default function ApplyWingmanPage({ flowId }: WingmanPageProps) {
 
   const createInterview = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/create-interview', {
+      const response = await fetch('http://127.0.0.1:5000/api/create_or_update_interview', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           flow_id: "bfba5e51",
+          applicant_user_id: "1",
+          interviewer_user_id: "2",
           user_email: 'user@example.com', // This should be passed as a prop or retrieved from user context
           first_name: 'John', // This should be passed as a prop or retrieved from user context
           last_name: 'Doe' // This should be passed as a prop or retrieved from user context
@@ -76,7 +78,7 @@ export default function ApplyWingmanPage({ flowId }: WingmanPageProps) {
           <div className="space-y-4">
             <button 
               onClick={createInterview}
-              className="w-full px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-semibold"
+              className="w-full px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-semibold hover:cursor-pointer"
             >
               Join Interview
             </button> 
@@ -87,7 +89,7 @@ export default function ApplyWingmanPage({ flowId }: WingmanPageProps) {
               <h3 className="text-lg font-semibold">Interview Link:</h3>
               <button 
                 onClick={() => window.open(interviewLink!, '_blank')}
-                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors hover:cursor-pointer"
               >
                 Open in New Tab
               </button>

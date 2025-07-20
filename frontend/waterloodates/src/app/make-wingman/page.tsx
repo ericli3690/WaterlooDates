@@ -87,7 +87,7 @@ export default withPageAuthRequired(function MakeWingmanPage({ user }: { user: a
         <div className="flex justify-center mb-8">
           <button
             onClick={addQuestion}
-            className="flex items-center space-x-2 px-5 py-2 bg-[#ffda23] text-black rounded-lg hover:bg-[#f7e84a] transition-colors font-semibold"
+            className="flex items-center space-x-2 px-5 py-2 bg-[#ffda23] text-black rounded-lg hover:bg-[#f7e84a] transition-colors font-semibold hover:cursor-pointer"
           >
             <span className="text-xl font-bold">+</span>
             <span>Add Question</span>
@@ -97,7 +97,7 @@ export default withPageAuthRequired(function MakeWingmanPage({ user }: { user: a
         <div className="flex justify-center">
           <button
             onClick={createWingman}
-            className="px-10 py-3 bg-[#ff76e8] text-black rounded-lg hover:bg-[#f054db] transition-colors font-semibold"
+            className="px-10 py-3 bg-[#ff76e8] text-black rounded-lg hover:bg-[#f054db] transition-colors font-semibold hover:cursor-pointer"
           >
             Create My Wingman
           </button>
