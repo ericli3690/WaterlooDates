@@ -3,6 +3,8 @@ import { Outfit } from "next/font/google";
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import "./globals.css";
+import { MantineProvider } from '@mantine/core';
+import '@mantine/core/styles.css';
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -28,8 +30,10 @@ export default function RootLayout({
       <body
         className={`${outfit.variable} antialiased ${isHomepage ? '' : 'pt-16'}`}
       >
-        <Navbar />
-        {children}
+        <MantineProvider>
+          <Navbar />
+          {children}
+        </MantineProvider>
       </body>
     </html>
   );

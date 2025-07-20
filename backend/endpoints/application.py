@@ -180,6 +180,7 @@ def get_applications_for_interviewer_and_update_status():
             "interviewer_user_id": user_id,
             "status": 2
         }))
+        completed_applications.append(list(applications_collection.find({"interviewer_user_id": user_id, "status": 1})))
         
         # Convert ObjectId to string for JSON serialization and add user names
         for app in completed_applications:
@@ -250,6 +251,7 @@ def get_applications_for_applicant_and_update_status():
             "applicant_user_id": user_id,
             "status": 0
         }))
+        completed_applications.append(list(applications_collection.find({"applicant_user_id": user_id, "status": 1})))
         
         # Convert ObjectId to string for JSON serialization
         for app in completed_applications:
