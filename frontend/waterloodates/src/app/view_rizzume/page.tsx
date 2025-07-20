@@ -99,7 +99,7 @@ export default function ViewRizzumePage() {
             <p className="text-gray-600">
               {profiles.length === 0 
                 ? "No profiles found" 
-                : `Found ${profiles.length} profile${profiles.length === 1 ? '' : 's'}`}
+                : `Found ${profiles.length} profile${profiles.length === 1 ? '' : 's'}...`}
             </p>
           )}
         </div>

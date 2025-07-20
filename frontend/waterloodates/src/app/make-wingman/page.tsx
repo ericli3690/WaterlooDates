@@ -43,7 +43,7 @@ export default withPageAuthRequired(function MakeWingmanPage({ user }: { user: a
       console.log('Questions and Desired Answers:', validQuestionsAndAnswers); // TO-DATABASE
       console.log('User ID:', user.sub);
 
-      const response = await fetch("http://127.0.0.1:5000/api/create-interview-flow", {
+      const response = await fetch("http://127.0.0.1:5000/api/create_or_update_interview_flow", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

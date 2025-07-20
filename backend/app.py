@@ -15,7 +15,7 @@ from endpoints.application import create_application, update_application, get_ap
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["http://localhost:3000", "http://127.0.0.1:3000"], supports_credentials=True)
 
 # MongoDB connection
 mongodb_uri = os.getenv('MONGODB_URI')
