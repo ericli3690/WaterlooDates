@@ -96,7 +96,7 @@ export default withPageAuthRequired(function ApplyPage({ user }: { user: any }) 
     const applicantUserId = encodeURIComponent(user.sub);
     const interviewerUserId = encodeURIComponent(person?.id || "");
 
-    router.push(`/apply/wingman?applicantUserId=${applicantUserId}&interviewerUserId=${interviewerUserId}`);
+    router.push(`/apply/wingman?applicant_user_id=${applicantUserId}&interviewer_user_id=${interviewerUserId}`);
   };
 
   if (!id) return <div className="text-center text-red-500 mt-10">No ID provided</div>;

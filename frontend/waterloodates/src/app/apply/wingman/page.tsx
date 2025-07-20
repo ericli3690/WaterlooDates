@@ -6,8 +6,8 @@ import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 
 export default withPageAuthRequired(function ApplyWingmanPage({ user }) {
   const searchParams = useSearchParams();
-  const applicantUserId = searchParams.get('applicantUserId');
-  const interviewerUserId = searchParams.get('interviewerUserId');
+  const applicantUserId = searchParams.get('applicant_user_id');
+  const interviewerUserId = searchParams.get('interviewer_user_id');
   
   const [interviewLink, setInterviewLink] = useState<string | null>(null);
   const [showIframe, setShowIframe] = useState(false);
