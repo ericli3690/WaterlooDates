@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function RedirectPage() {
@@ -8,6 +8,11 @@ export default function RedirectPage() {
   const goToSearch = () => {
     router.push("/view_rizzume");
   };
+
+  useEffect(() => {
+    goToSearch();
+    window.parent.postMessage("navigated", "*");
+  }, []);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-[#664e5b]">

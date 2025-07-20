@@ -3,8 +3,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
+import { useRouter } from 'next/navigation';
 
 export default withPageAuthRequired(function ApplyWingmanPage({ user }) {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const applicantUserId = searchParams.get('applicant_user_id');
   const interviewerUserId = searchParams.get('interviewer_user_id');
@@ -21,6 +23,11 @@ export default withPageAuthRequired(function ApplyWingmanPage({ user }) {
     (async () => {
       await navigator.mediaDevices.getUserMedia({ audio: true });
     })()
+    window.addEventListener("message", (event) => {
+      if (event.data === "navigated") {
+        router.push("/redirect");
+      }
+    });
   }, [])
 
   useEffect(() => {
