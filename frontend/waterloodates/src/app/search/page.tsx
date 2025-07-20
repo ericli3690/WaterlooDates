@@ -48,7 +48,7 @@ export default withPageAuthRequired(function SearchPage({ user }) {
   ]);
 
   useEffect(() => {
-    fetch(path.join(process.env.NEXT_PUBLIC_API_URL as string, "get_all_rizzumes"), {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}get_all_rizzumes`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
