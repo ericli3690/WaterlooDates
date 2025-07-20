@@ -112,7 +112,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
           setUserData(data);
 
           if (data.rizzume_created) {
-            fetch(`${process.env.NEXT_PUBLIC_API_URL}/applications/outgoing`)
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}applications/outgoing`)
               .then((res) => res.json())
               .then(setOutgoingApplications)
               .catch(console.error);
@@ -139,7 +139,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
   }, [user]);
 
   return (
-    <div className="bg-[#664e5b] min-h-screen px-4 py-6 relative">
+    <div className="bg-[#664e5b] min-h-screen px-4 pt-16 py-6 relative">
 
 
       <div className="bg-white text-black border border-yellow-400 p-6 rounded-2xl shadow-xl max-w-5xl w-full mx-auto mt-12 relative">
