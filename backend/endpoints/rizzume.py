@@ -99,12 +99,19 @@ def get_all_rizzumes():
         # data = request.get_json()
         # filters = data.get('filters')
         rizzumes = list(rizzume_collection.find())
-        
+        rizzumes_with_wingman_created = []
         # Convert ObjectId to string for JSON serialization
         for rizzume in rizzumes:
             rizzume['_id'] = str(rizzume['_id'])
+            user_id = rizzume.get('user_id')
+            if not user_id:
+                continue
+            has_wingman = users_collection.find_one({'user_id': user_id})['wingman_created']
+            if not has_wingman:
+                continue
+            rizzumes_with_wingman_created.append(rizzume)
             
-        return jsonify(rizzumes), 200
+        return jsonify(rizzumes_with_wingman_created), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
