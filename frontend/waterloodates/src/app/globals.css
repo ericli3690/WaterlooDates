@@ -1,9 +1,17 @@
 @import "tailwindcss";
 
+@layer base {
+  h1, .font-display {
+    font-family: "Nekst", sans-serif;
+  }
+}
+
 :root {
   --background: #ffffff;
   --foreground: #ffffff;
 }
+
+
 
 @theme inline {
   --color-background: var(--background);
