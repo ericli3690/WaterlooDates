@@ -56,7 +56,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
   }, [user]);
 
   return (
-    <div className="max-w-5xl mx-auto p-8 text-white">
+    <div className="min-h-[calc(100vh-4rem)] max-w-5xl mx-auto p-8 text-white">
       <div className="bg-white text-black border border-yellow-400 p-6 rounded-2xl shadow-xl">
         {/* Header row with welcome and button */}
         <div className="flex justify-between items-center mb-6">

@@ -15,7 +15,7 @@ export default withPageAuthRequired(function SearchPage({ user }) {
     {
       id: "123",
       title: "That's enough for me",
-      description: "Song Yu Li is simply pleasing to the eyes",
+      description: "Song Yu Li is simply pleasing Wto the eyes",
     },
     {
       id: "124",
@@ -97,5 +97,3 @@ export default withPageAuthRequired(function SearchPage({ user }) {
     </div>
   );
 });
-
-

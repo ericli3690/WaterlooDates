@@ -23,11 +23,11 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      
+      <Navbar />
       <body
-        className={`${outfit.variable} antialiased`}
+        className={`${outfit.variable} antialiased pt-16`}
       >
-        <Navbar />
+        
         {children}
       </body>
     </html>
