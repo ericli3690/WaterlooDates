@@ -1,11 +1,19 @@
+@import "@fontsource-nekst";
 @import "tailwindcss";
-@import "@fontsource/quicksand/400.css"; /* Normal */
+
+@layer base {
+  h1, .font-display {
+    font-family: "Nekst", sans-serif;
+  }
+}
 
 :root {
   --background: #ffffff;
   --foreground: #ffffff;
 }
 
+
+}
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
