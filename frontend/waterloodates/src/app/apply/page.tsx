@@ -12,7 +12,6 @@ interface Posting {
 export default withPageAuthRequired(function ApplyPage({ user }: { user: any }) {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { user } = useUser();
 
   const id = searchParams.get("id") as string;
 

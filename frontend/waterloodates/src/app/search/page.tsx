@@ -69,7 +69,7 @@ export default withPageAuthRequired(function SearchPage({ user }) {
   }, [user]);
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] py-12 px-4 sm:px-6 lg:px-8 bg-[#5b3e4a]">
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 pt-24 bg-[#5b3e4a]">
       <div className="max-w-4xl mx-auto space-y-6">
         <h1 className="text-3xl font-bold text-white text-center mb-8">
           💘 Available Rizzumés
