@@ -24,12 +24,7 @@ interface Application {
 
 export default withPageAuthRequired(function DashboardPage({ user }) {
 
-  const [userData, setUserData] = useState<UserData | null>({
-    name: "",
-    email: "",
-    rizzume_created: true,
-    wingman_created: false,
-  });
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [outgoingApplications, setOutgoingApplications] = useState<Application[]>([
     {
       _id: "1",

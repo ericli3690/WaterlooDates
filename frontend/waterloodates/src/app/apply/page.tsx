@@ -22,28 +22,23 @@ export default withPageAuthRequired(function ApplyPage({ user }: { user: any }) 
   });
   const [userData, setUserData] = useState<any>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [showRizzumePopup, setShowRizzumePopup] = useState(false);
   const hasInitialized = useRef(false);
 
   useEffect(() => {
     if (!id || !user || hasInitialized.current) return;
-    
+
     hasInitialized.current = true;
 
-    // Fetch user data to check if rizzume is created
     fetch("http://127.0.0.1:5000/api/create_or_get_user", {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(user),
     })
       .then((res) => res.json())
-      .then((data) => {
-        setUserData(data);
-      })
+      .then((data) => setUserData(data))
       .catch((err) => console.error('Error fetching user data:', err));
 
-    // Fetch person data
     fetch(`${process.env.NEXT_PUBLIC_API_URL}get_all_rizzumes`)
       .then((res) => res.json())
       .then((data: Posting[]) => {
@@ -64,9 +59,7 @@ export default withPageAuthRequired(function ApplyPage({ user }: { user: any }) 
     try {
       const response = await fetch('http://127.0.0.1:5000/api/create_application', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           applicant_user_id: user.sub,
           interviewer_user_id: person?.id,
@@ -74,7 +67,7 @@ export default withPageAuthRequired(function ApplyPage({ user }: { user: any }) 
       });
 
       const data = await response.json();
-      
+
       if (data.success) {
         alert('Application submitted successfully!');
         router.push('/dashboard');
@@ -89,18 +82,6 @@ export default withPageAuthRequired(function ApplyPage({ user }: { user: any }) 
     }
   };
 
-  if (!id) {
-    return (
-      <div className="text-center text-red-500 mt-10">No ID provided</div>
-    );
-  }
-
-  if (!person) {
-    return (
-      <div className="text-center text-gray-400 mt-10">Loading...</div>
-    );
-  }
-
   const handleStartInterview = () => {
     if (!user?.sub) {
       console.error("User not authenticated");
@@ -108,18 +89,18 @@ export default withPageAuthRequired(function ApplyPage({ user }: { user: any }) 
     }
 
     const applicantUserId = encodeURIComponent(user.sub);
-    const interviewerUserId = encodeURIComponent(person.id);
+    const interviewerUserId = encodeURIComponent(person?.id || "");
 
-    router.push(
-      `/apply/wingman?applicantUserId=${applicantUserId}&interviewerUserId=${interviewerUserId}`
-    );
+    router.push(`/apply/wingman?applicantUserId=${applicantUserId}&interviewerUserId=${interviewerUserId}`);
   };
+
+  if (!id) return <div className="text-center text-red-500 mt-10">No ID provided</div>;
+  if (!person) return <div className="text-center text-gray-400 mt-10">Loading...</div>;
 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-[#5b3e4a] text-white flex flex-col items-center justify-center px-4 py-12">
       <div className="bg-white text-[#5b3e4a] rounded-3xl shadow-xl p-10 max-w-xl w-full text-center space-y-6 relative">
-      <div className="bg-white text-[#5b3e4a] rounded-3xl shadow-xl p-10 max-w-xl w-full text-center space-y-6 relative">
-        
+
         {/* Back Button */}
         <button
           onClick={() => router.push("/search")}
@@ -135,7 +116,7 @@ export default withPageAuthRequired(function ApplyPage({ user }: { user: any }) 
 
         <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
           <button
-            onClick={() => router.push(`/rizzume/${person.id}`)}
+            onClick={() => setShowRizzumePopup(true)}
             className="cursor-pointer bg-[#ff76e8] hover:bg-[#e85fcf] text-white font-semibold py-3 px-6 rounded-full shadow-lg transition"
           >
             View Rizzumé 📄
@@ -148,14 +129,29 @@ export default withPageAuthRequired(function ApplyPage({ user }: { user: any }) 
             {submitting ? 'Submitting...' : 'Submit Application 💌'}
           </button>
           <button
-            onClick={() => router.push(`/interview/${person.id}`)}
+            onClick={handleStartInterview}
             className="cursor-pointer bg-yellow-300 hover:bg-yellow-400 text-[#5b3e4a] font-semibold py-3 px-6 rounded-full shadow-lg transition"
           >
             Start Interview 🎤
           </button>
         </div>
+
+        {/* Rizzume Popup */}
+        {showRizzumePopup && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white text-[#5b3e4a] rounded-3xl shadow-2xl p-8 w-[90%] max-w-2xl relative">
+              <button
+                onClick={() => setShowRizzumePopup(false)}
+                className="absolute top-4 right-4 text-2xl font-bold text-[#5b3e4a] hover:text-[#ff76e8]"
+              >
+                ×
+              </button>
+              <h2 className="text-2xl font-bold mb-4">{person.title}'s Rizzumé</h2>
+              <p>{person.description}</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
-  </div>
   );
 });
