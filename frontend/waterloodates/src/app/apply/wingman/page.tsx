@@ -3,8 +3,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
+import { useRouter } from 'next/navigation';
 
 export default withPageAuthRequired(function ApplyWingmanPage({ user }) {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const applicantUserId = searchParams.get('applicant_user_id');
   const interviewerUserId = searchParams.get('interviewer_user_id');
@@ -21,6 +23,11 @@ export default withPageAuthRequired(function ApplyWingmanPage({ user }) {
     (async () => {
       await navigator.mediaDevices.getUserMedia({ audio: true });
     })()
+    window.addEventListener("message", (event) => {
+      if (event.data === "navigated") {
+        router.push("/over");
+      }
+    });
   }, [])
 
   useEffect(() => {
@@ -81,7 +88,7 @@ export default withPageAuthRequired(function ApplyWingmanPage({ user }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#664e5b] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#664e5b] flex items-center justify-center p-4 pt-24 pb-24">
       <div className="max-w-4xl w-full bg-white rounded-lg shadow-md p-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">
           Wingman Application
@@ -104,11 +111,11 @@ export default withPageAuthRequired(function ApplyWingmanPage({ user }) {
                 Open in New Tab
               </button>
             </div>
-            <div className="border border-gray-300 rounded-lg overflow-hidden">
+            <div className="border-4 border-[#ff76e8] rounded-lg overflow-hidden shadow-lg">
               <iframe
                 ref={iframeRef}
                 src={interviewLink!}
-                className="w-full h-96"
+                className="w-full h-[80vh]"
                 allow="microphone; camera"
                 title="Interview"
               />

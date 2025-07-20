@@ -131,7 +131,7 @@ export default withPageAuthRequired(function ViewRizzumePage({ user }) {
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-2xl cursor-pointer font-bold">×</button>
         </div>
         <h2 className="text-xl text-black font-semibold text-center mb-10">
-          Apply to {profile.profile.name.first} {profile.profile.name.last}
+          Apply for {profile.profile.name.first} {profile.profile.name.last}
         </h2>
         <div className="flex flex-col gap-4">
           <button
