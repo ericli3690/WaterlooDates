@@ -48,6 +48,15 @@ export default withPageAuthRequired(function ApplyPage() {
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-[#5b3e4a] text-white flex flex-col items-center justify-center px-4 py-12">
       <div className="bg-white text-[#5b3e4a] rounded-3xl shadow-xl p-10 max-w-xl w-full text-center space-y-6">
+        
+        {/* Back Button */}
+        <button
+          onClick={() => router.push("/search")}
+          className="text-sm text-[#5b3e4a] hover:text-[#ff76e8] font-semibold underline transition cursor-pointer"
+        >
+          ← Back to Search
+        </button>
+
         <h1 className="text-4xl font-bold text-[#ff76e8]">
           💞 You're applying to {person.title}
         </h1>
@@ -56,13 +65,13 @@ export default withPageAuthRequired(function ApplyPage() {
         <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
           <button
             onClick={() => router.push(`/rizzume/${person.id}`)}
-            className="bg-[#ff76e8] hover:bg-[#e85fcf] text-white font-semibold py-3 px-6 rounded-full shadow-lg transition"
+            className="cursor-pointer bg-[#ff76e8] hover:bg-[#e85fcf] text-white font-semibold py-3 px-6 rounded-full shadow-lg transition"
           >
             View Rizzumé 📄
           </button>
           <button
             onClick={() => router.push(`/interview/${person.id}`)}
-            className="bg-yellow-300 hover:bg-yellow-400 text-[#5b3e4a] font-semibold py-3 px-6 rounded-full shadow-lg transition"
+            className="cursor-pointer bg-yellow-300 hover:bg-yellow-400 text-[#5b3e4a] font-semibold py-3 px-6 rounded-full shadow-lg transition"
           >
             Start Interview 🎤
           </button>
