@@ -61,25 +61,39 @@ export default function ViewRizzumePage() {
     fetchProfiles();
   }, []);
 
-  const Modal = ({ profile, onClose }: { profile: RizzumeProfile; onClose: () => void }) => (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white max-w-4xl w-full max-h-[90vh] overflow-y-auto rounded-lg">
-        <div className="flex justify-end p-4 pb-0">
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-2xl font-bold hover:cursor-pointer"
-          >
-            ×
-          </button>
+  const Modal = ({ profile, onClose }: { profile: RizzumeProfile; onClose: () => void }) => {
+    const handleCreateApplication = () => {
+      // Navigate to application page with profile info
+      const profileData = encodeURIComponent(JSON.stringify(profile));
+      window.location.href = `/apply?profile=${profileData}`;
+    };
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="bg-white max-w-4xl w-full max-h-[90vh] overflow-y-auto rounded-lg">
+          <div className="flex justify-between items-center p-4 pb-0">
+            <button
+              onClick={handleCreateApplication}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              Create Application
+            </button>
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700 text-2xl font-bold hover:cursor-pointer"
+            >
+              ×
+            </button>
+          </div>
+          <RizzumeForm 
+            initialData={profile}
+            viewMode={true}
+            onCancel={onClose}
+          />
         </div>
-        <RizzumeForm 
-          initialData={profile}
-          viewMode={true}
-          onCancel={onClose}
-        />
       </div>
-    </div>
-  );
+    );
+  };
 
   // If showForm is true, render the RizzumeForm component
   if (showForm) {
@@ -91,10 +105,11 @@ export default function ViewRizzumePage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-8">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Rizzumé Profiles</h1>
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 pt-24 bg-[#5b3e4a]">
+        <div className="max-w-4xl mx-auto space-y-6">
+          <h1 className="text-3xl font-bold text-white text-center mb-8">
+            💘 Available Rizzumés
+          </h1>
           {!loading && (
             <p className="text-gray-600">
               {profiles.length === 0 
@@ -103,8 +118,6 @@ export default function ViewRizzumePage() {
             </p>
           )}
         </div>
-      </div>
-      
       {loading ? (
         <div className="text-center py-12">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>

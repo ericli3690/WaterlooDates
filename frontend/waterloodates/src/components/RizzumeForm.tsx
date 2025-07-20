@@ -88,7 +88,7 @@ const RizzumeForm = forwardRef<RizzumeFormRef, RizzumeFormProps>(({ onSubmit, on
     }))
 
     return (
-        <div className="p-6 max-w-5xl mx-auto bg-white">
+        <div className={`p-6 max-w-5xl mx-auto ${viewMode ? 'bg-transparent' : 'bg-white'}`}>
             <div className="text-center mb-6">
                 <h1 className="text-2xl font-bold tracking-wider text-black">{viewMode ? 'RIZZUMÉ' : 'RIZZUMÉ FORM'}</h1>
             </div>
