@@ -13,3 +13,4 @@ frontend/waterloodates/node_modules/*
 frontend/waterloodates/next-env.d.ts
 uv.lock
 pyproject.toml
+node_modules/
