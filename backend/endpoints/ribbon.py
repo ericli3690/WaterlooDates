@@ -55,10 +55,11 @@ def create_or_update_interview_flow():
             "org_name": "waterloo-dates",
             "title": user_id,
             "questions": questions,
-            "additional_info": "You are a dating interviewer. Your are helping someone who is using a dating app to interview propspective partners like a wingman.",
+            "additional_info": "You are a dating interviewer. Your are helping someone who is using a dating app to interview propspective romantic partners like a wingman.",
             "interview_type": "general",
             "is_video_enabled": False,
-            "is_phone_call_enabled": True
+            "is_phone_call_enabled": True,
+            "redirect_url": "http://localhost:3000/redirect"
         }
         headers = {
             "accept": "application/json",

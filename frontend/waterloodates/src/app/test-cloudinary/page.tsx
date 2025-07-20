@@ -44,7 +44,7 @@ export default function TestCloudinary() {
           <h2 className="text-lg font-semibold">Images ({images.length})</h2>
           <button 
             onClick={loadImages}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 hover:cursor-pointer"
           >
             Refresh
           </button>
@@ -64,7 +64,7 @@ export default function TestCloudinary() {
                 <p className="text-xs text-gray-600 mb-2 truncate">{img.public_id}</p>
                 <button
                   onClick={() => handleDelete(img.public_id)}
-                  className="w-full px-2 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600"
+                  className="w-full px-2 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600 hover:cursor-pointer"
                 >
                   Delete
                 </button>
