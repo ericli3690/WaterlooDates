@@ -10,6 +10,11 @@ interface Application {
   status: string;
   createdAt: string;
   applicationId: string;
+  gemini_response?: {
+    summary?: string;
+    opinion?: string;
+    confidence?: number; // 0-100
+  };
 }
 
 interface UserData {
@@ -45,10 +50,29 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
       recipientId: "1",
       applicantName: "Alice Johnson",
       recipientName: "John Doe",
-      status: "Accepted",
+      status: "Completed",
       createdAt: new Date().toISOString(),
       applicationId: "app-456",
-    }
+      gemini_response: {
+        summary: "Alice was confident and answered all questions thoroughly. She seems genuinely interested and aligns well with your interests.",
+        opinion: "Your wingman thinks Alice is a great match and you should definitely consider a date!",
+        confidence: 85,
+      },
+    },
+    {
+      applicantId: "4",
+      recipientId: "1",
+      applicantName: "Bob Smith",
+      recipientName: "John Doe",
+      status: "Completed",
+      createdAt: new Date().toISOString(),
+      applicationId: "app-789",
+      gemini_response: {
+        summary: "Bob seemed a bit nervous and his answers were short. Compatibility might be moderate.",
+        opinion: "Wingman recommends another chat to gauge chemistry before committing to a date.",
+        confidence: 55,
+      },
+    },
   ]);
   const [activeTab, setActiveTab] = useState<"outgoing" | "incoming">("outgoing");
   const hasInitialized = useRef(false);
@@ -73,9 +97,18 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
               .catch(console.error);
 
             if (data.wingmanCreated) {
-              fetch(`${process.env.NEXT_PUBLIC_API_URL}/applications/incoming`)
+              // Fetch incoming applications with gemini responses
+              fetch("http://127.0.0.1:5000/api/get_applications_for_interviewer_and_update_status", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user_id: user.sub }),
+              })
                 .then((res) => res.json())
-                .then(setIncomingApplications)
+                .then((resp) => {
+                  if (resp && resp.applications) {
+                    setIncomingApplications(resp.applications as Application[]);
+                  }
+                })
                 .catch(console.error);
             }
           }
@@ -189,18 +222,58 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
             {/* Incoming (only if wingman exists) */}
             {activeTab === "incoming" && userData.wingmanCreated && (
               <ul className="space-y-2">
-                {incomingApplications.map((app, idx) => (
-                  <li
-                    key={idx}
-                    className="p-4 bg-white text-black border border-yellow-300 rounded-xl shadow"
-                  >
-                    {app.applicantName} applied to you on{" "}
-                    {new Date(app.createdAt).toLocaleDateString()}.
-                    <span className="block text-sm text-gray-600">
-                      Status: {app.status}
-                    </span>
-                  </li>
-                ))}
+                {incomingApplications.map((app, idx) => {
+                  const conf = app.gemini_response?.confidence ?? 0;
+                  const strokeDasharray = 2 * Math.PI * 28; // r=28
+                  const strokeDashoffset = strokeDasharray * (1 - conf / 100);
+                  const strokeColor = conf >= 70 ? "#26a69a" : conf >= 40 ? "#ffda23" : "#e03e3e";
+                  return (
+                    <li
+                      key={idx}
+                      className="p-4 bg-white text-black border border-yellow-300 rounded-xl shadow flex justify-between items-start"
+                    >
+                      <div className="pr-4 flex-1">
+                        <p>
+                          {app.applicantName} applied to you on {" "}
+                          {new Date(app.createdAt).toLocaleDateString()}.
+                        </p>
+                        <span className="block text-sm text-gray-600 mb-2">Status: {app.status}</span>
+                        {app.gemini_response && (
+                          <>
+                            <p className="font-semibold mb-1">Interview Summary:</p>
+                            <p className="mb-2 text-sm text-gray-700 whitespace-pre-line">
+                              {app.gemini_response.summary || "N/A"}
+                            </p>
+                            <p className="font-semibold mb-1">Your Wingman's Opinion:</p>
+                            <p className="text-sm text-gray-700 whitespace-pre-line">
+                              {app.gemini_response.opinion || "N/A"}
+                            </p>
+                          </>
+                        )}
+                      </div>
+                      <div className="w-20 h-20 flex items-center justify-center">
+                        <svg width="60" height="60">
+                          <circle cx="30" cy="30" r="28" stroke="#e5e7eb" strokeWidth="4" fill="none" />
+                          <circle
+                            cx="30"
+                            cy="30"
+                            r="28"
+                            stroke={strokeColor}
+                            strokeWidth="4"
+                            fill="none"
+                            strokeDasharray={strokeDasharray}
+                            strokeDashoffset={strokeDashoffset}
+                            strokeLinecap="round"
+                            transform="rotate(-90 30 30)"
+                          />
+                          <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fontSize="12" fill="black">
+                            {conf}%
+                          </text>
+                        </svg>
+                      </div>
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </div>
