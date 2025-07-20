@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { useRouter } from "next/navigation";
 
 interface QuestionAndAnswer {
   question: string;
@@ -14,6 +15,7 @@ export default withPageAuthRequired(function MakeWingmanPage({ user }: { user: a
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const router = useRouter();
   const addQuestion = () => {
     setQuestionsAndDesiredAnswers([...questionsAndDesiredAnswers, { question: "", answer: "" }]);
   };
@@ -58,6 +60,7 @@ export default withPageAuthRequired(function MakeWingmanPage({ user }: { user: a
 
       if (data.success) {
         setShowSuccessDialog(true);
+        router.push('/dashboard');
         setTimeout(() => setShowSuccessDialog(false), 3000);
       } else {
         setErrorMessage(data.error || "Failed to create wingman");

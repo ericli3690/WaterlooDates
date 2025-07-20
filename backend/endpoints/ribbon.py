@@ -166,7 +166,7 @@ def check_and_update_processed_interview(interview_id):
         # data = request.get_json()
         
         # interview_id = data["interview_id"]
-        print("start polling")
+        print("START POLLING INTERVIEW STATUS")
         if not interview_id:
             return jsonify({"success": False, "error": "interview_id is required"}), 400
         
@@ -200,29 +200,32 @@ def check_and_update_processed_interview(interview_id):
             "authorization": f"Bearer {TOKEN}"
         }
         
-        print("url: ", url)
+        # print("url: ", url)
         response = requests.get(url, headers=headers)
-        print("response: ", response.json())
+        # print("response: ", response.json())
         response = response.json()
         ribbon_status = response["status"]
-        print("ribbon_status: ", ribbon_status)
+        # print("ribbon_status: ", ribbon_status)
+        print(f"--------------------------------\nRIBBON STATUS: {ribbon_status}\n--------------------------------")
         if not ribbon_status:
             return jsonify({"success": False, "error": "ribbon status is required"}), 400
-        print("HELOLOLOLOLOLOL")
+        # print("HELOLOLOLOLOLOL")
         if ribbon_status == "incomplete":
+            print("INCOMPLETE INTERVIEW")
             return jsonify({"success": True, "message": "interview is incomplete"}), 200
         elif ribbon_status == "completed":
-            print("START COMPLETE")
+            # print("START COMPLETE")
+            print("COMPLETED INTERVIEW")
             interview_data = response["interview_data"]
             audio_url = interview_data["audio_url"]
             transcript = interview_data["transcript"]
             question_to_transcript_mapping = interview_data["questions_to_transcript_mapping"]
             applicant_rizzume = rizzume_collection.find_one({"user_id": applicant_user_id})
             interviewer_rizzume = rizzume_collection.find_one({"user_id": interviewer_user_id})
-            print("INTERVIEW PROCESS COMPLEDED WAHOO")
+            # print("INTERVIEW PROCESS COMPLEDED WAHOO")
             if not applicant_rizzume or not interviewer_rizzume or not audio_url or not transcript or not question_to_transcript_mapping:
                 return jsonify({"success": False, "error": "audio_url, transcript, and question_to_transcript_mapping are required"}), 400
-            print("GREEN FN")
+            # print("GREEN FN")
             
             applicant_rizzume["_id"] = str(applicant_rizzume["_id"])
             interviewer_rizzume["_id"] = str(interviewer_rizzume["_id"])
@@ -233,19 +236,21 @@ def check_and_update_processed_interview(interview_id):
             existing_application["transcript"] = transcript
             existing_application["question_to_transcript_mapping"] = question_to_transcript_mapping
             existing_application["status"] = 2
-            print("ANDREW JIANG")
+            # print("ANDREW JIANG")
             # PASS TRANSCRIPT AND QUESTION TO TRANSCRIPT MAPPING TO GEMINI
             summary, opinion, confidence = get_wingman_opinion(transcript, question_to_transcript_mapping, questions_and_desired_answers, applicant_rizzume, interviewer_rizzume)
             # gemini_response = {}
-            print("GEMINI RESPONSE: ", summary, opinion, confidence)
+            print("PASS TO GEMINI")
+            # print("GEMINI RESPONSE: ", summary, opinion, confidence)
             existing_application["gemini_response"] = {
                 "summary": summary,
                 "opinion": opinion,
                 "confidence": confidence
             }
-            print("UPDATE APPLICATION GEMINI")
+            print("GEMINI RESPONSE RETRIEVED: ", summary, opinion, confidence)
+            # print("UPDATE APPLICATION GEMINI")
             applications_collection.update_one({"interview_id": interview_id}, {"$set": existing_application})
-            print("EXTRA GREEN FN")
+            # print("EXTRA GREEN FN")
             return jsonify({"success": True, "message": "interview has been processed"}), 200
         else:
             return jsonify({"success": False, "message": "status is fucked"}), 200
