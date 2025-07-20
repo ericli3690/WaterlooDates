@@ -114,13 +114,13 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
             <div className="flex space-x-4 mb-6">
               <button
                 onClick={() => setActiveTab('outgoing')}
-                className={`py-2 px-4 rounded font-medium ${activeTab === 'outgoing' ? 'bg-[#ff76e8] text-black' : 'bg-gray-200 text-gray-700'}`}
+                className={`py-2 px-4 rounded font-medium hover:cursor-pointer ${activeTab === 'outgoing' ? 'bg-[#ff76e8] text-black' : 'bg-gray-200 text-gray-700'}`}
               >
                 Outgoing Applications
               </button>
               <button
                 onClick={() => setActiveTab('incoming')}
-                className={`py-2 px-4 rounded font-medium ${activeTab === 'incoming' ? 'bg-[#ffda23] text-black' : 'bg-gray-200 text-gray-700'}`}
+                className={`py-2 px-4 rounded font-medium hover:cursor-pointer ${activeTab === 'incoming' ? 'bg-[#ffda23] text-black' : 'bg-gray-200 text-gray-700'}`}
               >
                 Incoming Applications
               </button>

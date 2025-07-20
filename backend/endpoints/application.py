@@ -141,13 +141,7 @@ def get_applications_for_interviewer_and_update_status():
             # Check if interview_id is not empty and not null, and status is incomplete
             if status == 1:
                 # Call check and update processed interview
-                updated_status = check_and_update_processed_interview(interview_id)
-                
-                # Update the application status in database
-                applications_collection.update_one(
-                    {"_id": application["_id"]},
-                    {"$set": {"status": updated_status}}
-                )
+                check_and_update_processed_interview(interview_id)
         
         # Query again for applications with status "done processing interview"
         completed_applications = list(applications_collection.find({
