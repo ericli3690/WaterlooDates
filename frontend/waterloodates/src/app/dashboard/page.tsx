@@ -32,6 +32,8 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [outgoingApplications, setOutgoingApplications] = useState<Application[]>([]);
   const [incomingApplications, setIncomingApplications] = useState<Application[]>([]);
+  const [showContactInfo, setShowContactInfo] = useState<boolean[]>([]);
+  const [contactInfo, setContactInfo] = useState<string[]>([]);
 
   const router = useRouter();
 
@@ -77,8 +79,45 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                 .then((res) => res.json())
                 .then((resp) => {
                   if (resp && resp.applications) {
-                    setIncomingApplications(resp.applications as Application[]);
                     console.log("incoming applications", resp.applications);
+                    // Filter out rejected applications and create showContactInfo array
+                    const filteredApplications = (resp.applications as Application[]).filter(
+                      app => app.interviewer_decision != InterviewerDecision.REJECTED
+                    );
+                    setIncomingApplications(filteredApplications);
+                    
+                    // Initialize showContactInfo array based on accepted applications
+                    const initialShowContactInfo = filteredApplications.map(
+                      app => app.interviewer_decision == InterviewerDecision.ACCEPTED
+                    );
+                    setShowContactInfo(initialShowContactInfo);
+                    
+                    // Initialize contactInfo array to empty strings
+                    let initialContactInfo: string[] = filteredApplications.map(() => "");
+
+                    // For accepted applications, fetch contact info and update the array
+                    const fetches = filteredApplications.map((app, idx) => {
+                      if (app.interviewer_decision == InterviewerDecision.ACCEPTED) {
+                        return fetch("http://localhost:5000/api/get_user_socials", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ user_id: app.applicant_user_id }),
+                        })
+                          .then((res) => res.json())
+                          .then((data) => {
+                            initialContactInfo[idx] = data?.success && data.socials
+                              ? (typeof data.socials === "string"
+                                  ? data.socials
+                                  : JSON.stringify(data.socials))
+                              : "No contact information available.";
+                          });
+                      } else {
+                        return Promise.resolve();
+                      }
+                    });
+                    Promise.all(fetches).then(() => setContactInfo(initialContactInfo));
+                    
+                    console.log("incoming applications", filteredApplications);
                   }
                 })
                 .catch(console.error);
@@ -184,7 +223,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                     key={idx}
                     className="p-4 bg-white text-black border border-yellow-300 rounded-xl shadow"
                   >
-                    <p className="font-semibold">Application to {app.interviewer_name ? app.interviewer_name : "Someone"}</p>
+                    <p className="font-semibold">Application</p>
                     <span className="block text-sm text-gray-600 mb-2">
                       Status: {prettyPrintStatus(app.status)}
                     </span>
@@ -206,24 +245,9 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                   const strokeDasharray = 2 * Math.PI * 28; // r=28
                   const strokeDashoffset = strokeDasharray * (1 - conf / 100);
                   const strokeColor = conf >= 70 ? "#26a69a" : conf >= 40 ? "#ffda23" : "#e03e3e";
-                  if (app.interviewer_decision === InterviewerDecision.REJECTED) return null;
 
-                  let contactInfo: any = {};
-                  if (app.interviewer_decision === InterviewerDecision.ACCEPTED) {
-                    fetch(`http://localhost:5000/api/get_user_socials`, {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
-                      body: JSON.stringify({
-                        user_id: app.applicant_user_id,
-                      }),
-                    })
-                      .then((res) => res.json())
-                      .then((data) => {
-                        contactInfo = data;
-                      });
-                  }
+                  // Show contact info if accepted and available
+                  // (contactInfo[idx] is set in state when showContactInfo[idx] is true)
                   return (
                     <li
                       key={idx}
@@ -271,31 +295,58 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                         )}
 
                         {/* Conditional exchange contact if accepted */}
-                        {app.interviewer_decision === InterviewerDecision.ACCEPTED && (
+                        {showContactInfo[idx] && (
                           <div className="mt-4">
                             <p className="font-semibold mb-2">Contact Information:</p>
-                            { contactInfo.success ? contactInfo.socials : "No contact information available." }
+                            <span className="text-gray-700">
+                              {contactInfo[idx]}
+                            </span>
                           </div>
                         )}
 
-                        {/* Conditional accept/reject buttons if decision is pending */}
-                        {(app.status === 2 &&app.interviewer_decision === InterviewerDecision.PENDING) && (
+                        {/* Conditional accept/reject buttons if decision is pending and not yet accepted */}
+                        {(app.status === 2 && app.interviewer_decision === InterviewerDecision.PENDING && !showContactInfo[idx]) && (
                           <div className="absolute bottom-4 right-4 flex flex-col space-y-2">
                             <button
                               className="bg-green-500 cursor-pointer text-white px-3 py-1 rounded-lg shadow hover:bg-green-600"
                               onClick={() => {
                                 fetch("http://localhost:5000/api/update_interviewer_decision", {
                                   method: "POST",
-                                  headers: {
-                                    "Content-Type": "application/json",
-                                  },
+                                  headers: { "Content-Type": "application/json" },
                                   body: JSON.stringify({
                                     "applicant_user_id": app.applicant_user_id,
                                     "interviewer_user_id": app.interviewer_user_id,
                                     "interviewer_decision": InterviewerDecision.ACCEPTED,
                                   }),
                                 });
-                                window.location.reload();
+                                
+                                // Update showContactInfo to show contact information for this application
+                                const newShowContactInfo = [...showContactInfo];
+                                newShowContactInfo[idx] = true;
+                                setShowContactInfo(newShowContactInfo);
+
+                                // Set contactInfo to loading for this idx
+                                const newContactInfo = [...contactInfo];
+                                newContactInfo[idx] = "Loading...";
+                                setContactInfo(newContactInfo);
+
+                                // Fetch and store contact info in state
+                                fetch("http://localhost:5000/api/get_user_socials", {
+                                  method: "POST",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ user_id: app.applicant_user_id }),
+                                })
+                                  .then((res) => res.json())
+                                  .then((data) => {
+                                    console.log("Fetched contact info for idx", idx, data);
+                                    const newContactInfo = [...contactInfo];
+                                    newContactInfo[idx] = data?.success && data.socials
+                                      ? (typeof data.socials === "string"
+                                          ? data.socials
+                                          : JSON.stringify(data.socials))
+                                      : "No contact information available.";
+                                    setContactInfo(newContactInfo);
+                                  });
                               }}
                             >
                               Accept
@@ -303,6 +354,13 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                             <button
                               className="bg-red-500 cursor-pointer text-white px-3 py-1 rounded-lg shadow hover:bg-red-600"
                               onClick={() => {
+                                // Remove the application from both arrays
+                                const newIncomingApplications = incomingApplications.filter((_, i) => i != idx);
+                                setIncomingApplications(newIncomingApplications);
+                                
+                                const newShowContactInfo = showContactInfo.filter((_, i) => i != idx);
+                                setShowContactInfo(newShowContactInfo);
+                                
                                 fetch("http://localhost:5000/api/update_interviewer_decision", {
                                   method: "POST",
                                   headers: {
@@ -314,7 +372,6 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                                     "interviewer_decision": InterviewerDecision.REJECTED,
                                   }),
                                 });
-                                window.location.reload();
                               }}
                             >
                               Reject
