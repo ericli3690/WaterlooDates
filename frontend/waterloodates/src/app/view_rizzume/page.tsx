@@ -78,12 +78,12 @@ export default withPageAuthRequired(function ViewRizzumePage({ user }) {
     const filtered = profiles.filter(profile => {
       console.log("profile", profile);
       // Filter by gender (case-insensitive)
-      if (filtersRef.current.genders.length > 0 && !filtersRef.current.genders.includes(profile.profile.gender.toLowerCase())) {
+      if (filtersRef.current.genders.length == 0 || !filtersRef.current.genders.includes(profile.profile.gender.toLowerCase())) {
         return false;
       }
       
       // Filter by sexuality (case-insensitive)
-      if (filtersRef.current.sexualities.length > 0 && !filtersRef.current.sexualities.includes(profile.profile.sexuality.toLowerCase())) {
+      if (filtersRef.current.sexualities.length == 0 || !filtersRef.current.sexualities.includes(profile.profile.sexuality.toLowerCase())) {
         return false;
       }
       
