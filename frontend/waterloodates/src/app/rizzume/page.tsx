@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
-import path from "path";
+import { UserData } from "@/interfaces/interfaces";
 
 export default withPageAuthRequired(function RizzumePage({ user }) {
   const [rizzumeCreated, setRizzumeCreated] = useState<boolean>(false);
@@ -22,8 +22,8 @@ export default withPageAuthRequired(function RizzumePage({ user }) {
           body: JSON.stringify(user),
         });
 
-        const data = await res.json();
-        setRizzumeCreated(data.rizzumeCreated);
+        const data: UserData = await res.json();
+        setRizzumeCreated(data.rizzume_created);
       } catch (error) {
         console.error("Failed to fetch user data:", error);
       }

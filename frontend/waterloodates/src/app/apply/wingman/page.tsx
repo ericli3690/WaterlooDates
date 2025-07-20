@@ -55,7 +55,7 @@ export default function ApplyWingmanPage() {
         }),
       });
       const data = await response.json();
-      
+
       if (data.success) {
         console.log('Interview ID:', data.interview_id);
         console.log('Interview Link:', data.interview_link);
@@ -78,13 +78,14 @@ export default function ApplyWingmanPage() {
       setIsLoading(false);
     }
   }
-  
+
   return (
     <div className="min-h-screen bg-[#664e5b] flex items-center justify-center p-4">
       <div className="max-w-4xl w-full bg-white rounded-lg shadow-md p-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">
           Wingman Application
         </h1>
+
         
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
@@ -95,7 +96,7 @@ export default function ApplyWingmanPage() {
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold">Interview Link:</h3>
-              <button 
+              <button
                 onClick={() => window.open(interviewLink!, '_blank')}
                 className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors hover:cursor-pointer"
               >
@@ -103,7 +104,7 @@ export default function ApplyWingmanPage() {
               </button>
             </div>
             <div className="border border-gray-300 rounded-lg overflow-hidden">
-              <iframe 
+              <iframe
                 ref={iframeRef}
                 src={interviewLink!}
                 className="w-full h-96"

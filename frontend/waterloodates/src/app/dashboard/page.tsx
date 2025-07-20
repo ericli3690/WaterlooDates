@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { UserData } from "@/interfaces/interfaces";
 
 interface Application {
     _id: string;
@@ -19,16 +20,10 @@ interface Application {
     interviewer_decision: string;
 }
 
-interface UserData {
-    name: string;
-    email: string;
-    rizzume_created: boolean;
-    wingman_created: boolean;
-    picture?: string;
-    nickname?: string;
-}
+
 
 export default withPageAuthRequired(function DashboardPage({ user }) {
+
   const [userData, setUserData] = useState<UserData | null>({
     name: "",
     email: "",
@@ -95,6 +90,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
       interviewer_decision: "",
     },
   ]);
+
   const [activeTab, setActiveTab] = useState<"outgoing" | "incoming">("outgoing");
   const hasInitialized = useRef(false);
 
@@ -149,7 +145,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
 
         {userData?.rizzume_created && (
           <a
-            href="/search"
+            href="/view_rizzume"
             className="absolute top-6 right-6 bg-[#ff76e8] hover:bg-[#ff90ef] text-white font-semibold py-2 px-4 rounded-full shadow-lg transition-all flex items-center group"
           >
             ❤️ Find Your Soulmate
