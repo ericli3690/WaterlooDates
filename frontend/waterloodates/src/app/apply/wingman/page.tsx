@@ -42,7 +42,7 @@ export default function ApplyWingmanPage({ applicantUserId, interviewerUserId }:
         }),
       });
       const data = await response.json();
-      
+
       if (data.success) {
         console.log('Interview ID:', data.interview_id);
         console.log('Interview Link:', data.interview_link);
@@ -63,28 +63,28 @@ export default function ApplyWingmanPage({ applicantUserId, interviewerUserId }:
       console.error('Error creating interview:', error);
     }
   }
-  
+
   return (
     <div className="min-                                                                        h-[calc(100vh-4rem)] bg-gray-50 flex items-center justify-center p-4">
       <div className="max-w-4xl w-full bg-white rounded-lg shadow-md p-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">
           Wingman Application
         </h1>
-        
+
         {!showIframe ? (
           <div className="space-y-4">
-            <button 
+            <button
               onClick={createInterview}
               className="w-full px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-semibold hover:cursor-pointer"
             >
               Join Interview
-            </button> 
+            </button>
           </div>
         ) : (
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold">Interview Link:</h3>
-              <button 
+              <button
                 onClick={() => window.open(interviewLink!, '_blank')}
                 className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors hover:cursor-pointer"
               >
@@ -92,7 +92,7 @@ export default function ApplyWingmanPage({ applicantUserId, interviewerUserId }:
               </button>
             </div>
             <div className="border border-gray-300 rounded-lg overflow-hidden">
-              <iframe 
+              <iframe
                 ref={iframeRef}
                 src={interviewLink!}
                 className="w-full h-96"

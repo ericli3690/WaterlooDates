@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { UserData } from "@/interfaces/interfaces";
 
 interface Application {
   applicantId: string;
@@ -12,44 +13,12 @@ interface Application {
   applicationId: string;
 }
 
-interface UserData {
-  name: string;
-  email: string;
-  rizzumeCreated: boolean;
-  wingmanCreated: boolean;
-  picture?: string;
-  nickname?: string;
-}
+
 
 export default withPageAuthRequired(function DashboardPage({ user }) {
-  const [userData, setUserData] = useState<UserData | null>({
-    name: "",
-    email: "",
-    rizzumeCreated: true,
-    wingmanCreated: false,
-  });
-  const [outgoingApplications, setOutgoingApplications] = useState<Application[]>([
-    {
-      applicantId: "1",
-      recipientId: "2",
-      applicantName: "John Doe",
-      recipientName: "Jane Smith",
-      status: "Pending",
-      createdAt: new Date().toISOString(),
-      applicationId: "app-123",
-    }
-  ]);
-  const [incomingApplications, setIncomingApplications] = useState<Application[]>([
-    {
-      applicantId: "3",
-      recipientId: "1",
-      applicantName: "Alice Johnson",
-      recipientName: "John Doe",
-      status: "Accepted",
-      createdAt: new Date().toISOString(),
-      applicationId: "app-456",
-    }
-  ]);
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [outgoingApplications, setOutgoingApplications] = useState<Application[]>([]);
+  const [incomingApplications, setIncomingApplications] = useState<Application[]>([]);
   const [activeTab, setActiveTab] = useState<"outgoing" | "incoming">("outgoing");
   const hasInitialized = useRef(false);
 
@@ -93,9 +62,9 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
           Welcome, {user?.name || "User"}!
         </h1>
 
-        {userData?.rizzumeCreated && (
+        {userData?.rizzume_created && (
           <a
-            href="/search"
+            href="/view_rizzume"
             className="absolute top-6 right-6 bg-[#ff76e8] hover:bg-[#ff90ef] text-white font-semibold py-2 px-4 rounded-full shadow-lg transition-all flex items-center group"
           >
             ❤️ Find Your Soulmate
@@ -118,9 +87,9 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
         </div>
 
         {/* Create Prompt Buttons */}
-        {(userData && (!userData.rizzumeCreated || !userData.wingmanCreated)) && (
+        {(userData && (!userData.rizzume_created || !userData.wingman_created)) && (
           <div className="mb-6 space-y-3">
-            {!userData.rizzumeCreated && (
+            {!userData.rizzume_created && (
               <a
                 href="/rizzume"
                 className="block bg-[#ff76e8] hover:bg-pink-400 text-black font-medium py-2 px-4 rounded"
@@ -128,7 +97,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                 Create Your Rizzumé
               </a>
             )}
-            {!userData.wingmanCreated && (
+            {!userData.wingman_created && (
               <a
                 href="/wingman"
                 className="block bg-[#ffda23] hover:bg-yellow-400 text-black font-medium py-2 px-4 rounded"
@@ -140,7 +109,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
         )}
 
         {/* Tabs for Applications */}
-        {userData?.rizzumeCreated && (
+        {userData?.rizzume_created && (
           <div className="mt-8">
             <div className="flex space-x-4 mb-6">
               <button
@@ -154,7 +123,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                 Outgoing Applications
               </button>
 
-              {userData.wingmanCreated && (
+              {userData.wingman_created && (
                 <button
                   onClick={() => setActiveTab("incoming")}
                   className={`py-2 px-4 rounded font-medium ${
@@ -187,7 +156,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
             )}
 
             {/* Incoming (only if wingman exists) */}
-            {activeTab === "incoming" && userData.wingmanCreated && (
+            {activeTab === "incoming" && userData.wingman_created && (
               <ul className="space-y-2">
                 {incomingApplications.map((app, idx) => (
                   <li

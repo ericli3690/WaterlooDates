@@ -6,7 +6,7 @@ export default function RedirectPage() {
   const router = useRouter();
 
   const goToSearch = () => {
-    router.push("/search");
+    router.push("/view_rizzume");
   };
 
   return (
