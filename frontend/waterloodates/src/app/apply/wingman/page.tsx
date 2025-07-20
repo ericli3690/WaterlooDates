@@ -91,7 +91,7 @@ export default withPageAuthRequired(function ApplyWingmanPage({ user }) {
     <div className="min-h-screen bg-[#664e5b] flex items-center justify-center p-4 pt-24 pb-24">
       <div className="max-w-4xl w-full bg-white rounded-lg shadow-md p-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-          Wingman Application
+          Wingman Interview
         </h1>
 
         
@@ -102,15 +102,6 @@ export default withPageAuthRequired(function ApplyWingmanPage({ user }) {
           </div>
         ) : showIframe && interviewLink ? (
           <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Interview Link:</h3>
-              <button
-                onClick={() => window.open(interviewLink!, '_blank')}
-                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors hover:cursor-pointer"
-              >
-                Open in New Tab
-              </button>
-            </div>
             <div className="border-4 border-[#ff76e8] rounded-lg overflow-hidden shadow-lg">
               <iframe
                 ref={iframeRef}
