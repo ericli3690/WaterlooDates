@@ -57,7 +57,7 @@ export default withPageAuthRequired(function MakeWingmanPage({ user }: { user: a
   };
 
   return (
-    <div className="min-h-screen bg-[#343434] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#664e5b] flex items-center justify-center p-4">
       <div className="max-w-2xl w-full bg-white rounded-3xl shadow-2xl p-8 border-4 border-[#ffda23]">
         <h1 className="text-3xl font-bold text-[#ff76e8] mb-8 text-center">
           Customize Your Wingman

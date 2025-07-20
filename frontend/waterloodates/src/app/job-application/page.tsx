@@ -40,7 +40,7 @@ export default withPageAuthRequired(function JobApplicationForm({ user }: { user
     };
 
     return (
-        <div className="min-h-screen bg-[#343434] flex items-center justify-center p-4">
+        <div className="min-h-screen bg-[#664e5b] flex items-center justify-center p-4">
             <div className="bg-white rounded-lg shadow-lg p-8 w-full">
                 <RizzumeForm ref={formRef} onSubmit={handleFormSubmit} />
                 <div className="text-center pt-4 pb-8">
