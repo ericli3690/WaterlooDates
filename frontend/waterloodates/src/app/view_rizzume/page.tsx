@@ -58,7 +58,7 @@ export default withPageAuthRequired(function ViewRizzumePage({ user }) {
   const handleStartInterview = (targetId: string) => {
     const sourceId = user?.sub?.split('|')[1]; // Assuming Auth0 ID format
     if (sourceId) {
-      window.location.href = `/apply/wingman?applicantUserId=${sourceId}&interviewerUserId=${targetId}`;
+      window.location.href = `/apply/wingman?applicant_user_id=${sourceId}&interviewer_user_id=${targetId}`;
     }
   };
 
@@ -82,7 +82,19 @@ export default withPageAuthRequired(function ViewRizzumePage({ user }) {
             View Rizzumé 📄
           </button>
           <button
-            onClick={() => handleStartInterview(profile.user_id)}
+            onClick={() => {
+              fetch(`http://127.0.0.1:5000/api/create_application`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  applicant_user_id: user.sub,
+                  interviewer_user_id: profile.user_id,
+                }),
+              }).then((res) => handleStartInterview(profile.user_id));
+              
+            }}
             className="cursor-pointer bg-yellow-300 hover:bg-yellow-400 text-[#5b3e4a] font-semibold py-3 px-6 rounded-full shadow-lg transition"
           >
             Start Interview 🎤
