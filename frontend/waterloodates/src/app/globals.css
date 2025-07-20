@@ -2,7 +2,7 @@
 
 @layer base {
   h1, .font-display {
-    font-family: "Nekst", sans-serif;
+    font-family: var(--font-outfit), sans-serif;
   }
 }
 
