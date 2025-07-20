@@ -150,7 +150,7 @@ def create_or_update_interview():
         existing_application["gemini_response"] = {}
         existing_application["interviewer_decision"] = ""
         applications_collection.update_one({"applicant_user_id": applicant_user_id, "interviewer_user_id": interviewer_user_id}, {"$set": existing_application})
-        return jsonify({"success": True, "message": "interview created"}), 200
+        return jsonify({"success": True, "message": f"interview created! interview_link: {interview_link}"}), 200
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
     
