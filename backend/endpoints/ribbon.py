@@ -12,6 +12,10 @@ load_dotenv()
 
 TOKEN = os.getenv("RIBBON_TOKEN")
 
+# Add token validation
+if not TOKEN:
+    print("❌ ERROR: RIBBON_TOKEN environment variable not set!")
+    
 user_collection = db['users']
 wingman_collection = db['wingman']
 applications_collection = db['applications']
@@ -20,6 +24,9 @@ rizzume_collection = db['rizzume']
 # GET
 def ping_ribbon():
     try:
+        if not TOKEN:
+            return jsonify({"success": False, "error": "RIBBON_TOKEN not configured"}), 500
+            
         url = "https://app.ribbon.ai/be-api/v1/ping"
 
         headers = {
@@ -28,13 +35,23 @@ def ping_ribbon():
         }
 
         response = requests.get(url, headers=headers)
+        
+        # Add response status check
+        if not response.ok:
+            print(f"❌ Ribbon API Error: {response.status_code} - {response.text}")
+            return jsonify({"success": False, "error": f"API Error: {response.status_code}"}), response.status_code
+            
         return response.json()["message"]
     except Exception as e:
+        print(f"❌ Ribbon ping error: {str(e)}")
         return jsonify({"success": False, "error": str(e)})
 
 # POST
 def create_or_update_interview_flow():
     try:
+        if not TOKEN:
+            return jsonify({"success": False, "error": "RIBBON_TOKEN not configured"}), 500
+            
         data = request.get_json()
         user_id = data.get('user_id')
         questions_and_desired_answers = data.get('questions_and_desired_answers')
@@ -71,7 +88,18 @@ def create_or_update_interview_flow():
         print("-------------TLALALALALAL-------------------")
         print(response.json())
         print("-------------TLALALALALAL-------------------")
-        interview_flow_id = response.json()["interview_flow_id"]
+        
+        # Add response status check
+        if not response.ok:
+            print(f"❌ Ribbon API Error: {response.status_code} - {response.text}")
+            return jsonify({"success": False, "error": f"API Error: {response.status_code} - {response.text}"}), response.status_code
+            
+        response_data = response.json()
+        if "interview_flow_id" not in response_data:
+            print(f"❌ Missing interview_flow_id in response: {response_data}")
+            return jsonify({"success": False, "error": "Invalid API response - missing interview_flow_id"}), 500
+            
+        interview_flow_id = response_data["interview_flow_id"]
         
         store_data = {
             "user_id": user_id,
@@ -96,6 +124,9 @@ def create_or_update_interview_flow():
 # Pass in application info
 def create_or_update_interview():
     try:
+        if not TOKEN:
+            return jsonify({"success": False, "interview_link": "", "error": "RIBBON_TOKEN not configured"}), 500
+            
         data = request.get_json()
         applicant_user_id = data.get('applicant_user_id')
         interviewer_user_id = data.get('interviewer_user_id')
@@ -120,7 +151,7 @@ def create_or_update_interview():
         flow_id = existing_wingman["interview_flow_id"]
         applicant_first_name = existing_applicant_rizzume["profile"]["name"]["first"]
         applicant_last_name = existing_applicant_rizzume["profile"]["name"]["last"]
-        applicant_email = existing_interviewer_user["email"]
+        applicant_email = existing_applicant_user["email"]  # Fixed: was using interviewer's email
         # print("CHECK 4")
         url = "https://app.ribbon.ai/be-api/v1/interviews"
 
@@ -143,9 +174,19 @@ def create_or_update_interview():
         # }
         response = requests.post(url, json=payload, headers=headers)
         
+        # Add response status check
+        if not response.ok:
+            print(f"❌ Ribbon API Error: {response.status_code} - {response.text}")
+            return jsonify({"success": False, "interview_link": "", "error": f"API Error: {response.status_code} - {response.text}"}), response.status_code
+        
+        response_data = response.json()
+        if "interview_id" not in response_data or "interview_link" not in response_data:
+            print(f"❌ Missing required fields in response: {response_data}")
+            return jsonify({"success": False, "interview_link": "", "error": "Invalid API response - missing required fields"}), 500
+        
         # print("CHECK 6")
-        interview_id = response.json()["interview_id"]
-        interview_link = response.json()["interview_link"]
+        interview_id = response_data["interview_id"]
+        interview_link = response_data["interview_link"]
         # print("CHECK 7")
         existing_application["interview_id"] = interview_id
         existing_application["interview_link"] = interview_link
@@ -259,6 +300,9 @@ def check_and_update_processed_interview(interview_id):
     
 def get_all_interviews():
     try:
+        if not TOKEN:
+            return jsonify({"success": False, "error": "RIBBON_TOKEN not configured"}), 500
+            
         url = "https://app.ribbon.ai/be-api/v1/interviews"
         
         headers = {
@@ -268,6 +312,13 @@ def get_all_interviews():
         }
         
         response = requests.get(url, headers=headers)
+        
+        # Add response status check
+        if not response.ok:
+            print(f"❌ Ribbon API Error: {response.status_code} - {response.text}")
+            return jsonify({"success": False, "error": f"API Error: {response.status_code}"}), response.status_code
+            
         return response.json()
     except Exception as e:
+        print(f"❌ Get all interviews error: {str(e)}")
         return jsonify({"success": False, "error": str(e)})
