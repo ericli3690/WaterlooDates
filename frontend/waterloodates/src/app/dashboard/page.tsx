@@ -55,6 +55,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
               .then((resp) => {
                 if (resp && resp.applications) {
                   setOutgoingApplications(resp.applications as Application[]);
+                  console.log("outgoing applications", resp.applications);
                 }
               })
               .catch(console.error);
@@ -70,6 +71,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                 .then((resp) => {
                   if (resp && resp.applications) {
                     setIncomingApplications(resp.applications as Application[]);
+                    console.log("incoming applications", resp.applications);
                   }
                 })
                 .catch(console.error);
@@ -206,7 +208,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                     >
                       <div className="pr-4 flex-1">
                         <p>
-                          {app.applicant_name ? app.applicant_name : "Someone"} applied to you!
+                          Application received!
                         </p>
                         <span className="block text-sm text-gray-600 mb-2">Status: {prettyPrintStatus(app.status)}</span>
                         {app.gemini_response && (

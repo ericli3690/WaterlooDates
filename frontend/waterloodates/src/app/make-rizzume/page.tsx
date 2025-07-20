@@ -94,7 +94,7 @@ export default withPageAuthRequired(function MakeRizzumePage({ user }: { user: a
     }
 
     return (
-        <div className="min-h-screen bg-[#664e5b] flex items-center justify-center p-4">
+        <div className="min-h-screen bg-[#664e5b] flex items-center justify-center p-24">
             <div className="bg-white rounded-lg shadow-lg p-8 w-full">
                 <RizzumeForm 
                     ref={formRef} 
