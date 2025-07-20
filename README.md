@@ -1,5 +1,6 @@
 # WaterlooDates
 This project was created for and submitted to Hack the 6ix 2025 by Andrew, Andrew, Dylan, and Eric. 6️⃣
+See [Devpost](https://devpost.com/software/waterloodates) for more info!
 
 ## Setup
 Clone the repository onto your local machine. For the frontend, be sure to `cd` into `frontend/waterloodates`. This is the root directory of the Next.js app. Then, run `npm install` to acquire the necessary Node modules to run the app. Moreover, to have Auth0 running, you will want to follow this guide: https://auth0.com/docs/quickstart/webapp/nextjs/01-login. Once that's done, you are ready to get up and running! Simply enter `npm run dev` to start the development server!
@@ -37,14 +38,14 @@ MongoDB Atlas was used to store user data, applications, rizz-umes, etc.
 ### AI
 We integrated multiple AI tools into our project:
 
-#### Ribbon.AI
+#### Ribbon.AI 🎀
 This was the cool out-of-the-box tool for creating voice AI interviews. We tried using it in a new way by making it help us with relationship candidate vetting! The system prompt told it about it's task of being a relationship wingman and the API took it from there.
 
-#### Vellum.AI
+#### Vellum.AI ⛓️
 To create the toolchain of LLM calls and scirpts that reads the interview transcript and generates an AI summary and opinion about relationship compatibility, we used Vellum's Workflow SDK:
 ![WaterlooDates Screenshot](https://d112y698adiu2z.cloudfront.net/photos/production/software_photos/003/626/843/datas/gallery.jpg)
 
 See our video on [Devpost](https://devpost.com/software/waterloodates) for a close up look!
 
-#### Google Gemini
-The model run by Vellum.AI in the background was a combination of Gemini 1.5 Flash and Gemini 2.5 Flash. ⚡'
+#### Google Gemini ♊
+The model run by Vellum.AI in the background was a combination of Gemini 1.5 Flash and Gemini 2.5 Flash. ⚡
