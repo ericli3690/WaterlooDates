@@ -165,6 +165,7 @@ def get_applications_for_interviewer_and_update_status():
         applications = list(applications_collection.find({"interviewer_user_id": user_id}))
         
         # Iterate through each application
+        print(applications)
         for application in applications:
             interview_id = application.get("interview_id")
             status = application.get("status")
@@ -173,16 +174,46 @@ def get_applications_for_interviewer_and_update_status():
             if status == 1:
                 # Call check and update processed interview
                 check_and_update_processed_interview(interview_id)
-        
+
         # Query again for applications with status "done processing interview"
         completed_applications = list(applications_collection.find({
             "interviewer_user_id": user_id,
             "status": 2
         }))
         
-        # Convert ObjectId to string for JSON serialization
+        # Convert ObjectId to string for JSON serialization and add user names
         for app in completed_applications:
             app["_id"] = str(app["_id"])
+            
+            # Get applicant name from rizzume
+            applicant_rizzume = rizzume_collection.find_one({"user_id": app["applicant_user_id"]})
+            if applicant_rizzume and "profile" in applicant_rizzume and "name" in applicant_rizzume["profile"]:
+                app["applicant_name"] = f"{applicant_rizzume['profile']['name']['first']} {applicant_rizzume['profile']['name']['last']}"
+            else:
+                app["applicant_name"] = "Unknown"
+            
+            # Get recipient (interviewer) name from rizzume
+            interviewer_rizzume = rizzume_collection.find_one({"user_id": app["interviewer_user_id"]})
+            if interviewer_rizzume and "profile" in interviewer_rizzume and "name" in interviewer_rizzume["profile"]:
+                app["recipient_name"] = f"{interviewer_rizzume['profile']['name']['first']} {interviewer_rizzume['profile']['name']['last']}"
+            else:
+                app["recipient_name"] = "Unknown"
+            
+            # Convert status to string format expected by frontend
+            status_map = {0: "Pending", 1: "In Progress", 2: "Completed"}
+            app["status"] = status_map.get(app["status"], "Unknown")
+            
+            # Convert interviewer_decision to string format
+            decision_map = {0: "Pending", 1: "Accept", 2: "Reject"}
+            app["interviewer_decision"] = decision_map.get(app["interviewer_decision"], "Pending")
+            
+            # Add application_id if missing (use _id as fallback)
+            if "application_id" not in app:
+                app["application_id"] = str(app["_id"])
+            
+            # Add created_at if missing (using current date as fallback)
+            if "created_at" not in app:
+                app["created_at"] = "2024-01-01T00:00:00Z"
         
         return jsonify({"success": True, "applications": completed_applications}), 200
     except Exception as e:
@@ -217,7 +248,7 @@ def get_applications_for_applicant_and_update_status():
         # Query again for applications with status "complete"
         completed_applications = list(applications_collection.find({
             "applicant_user_id": user_id,
-            "status": 2
+            "status": 0
         }))
         
         # Convert ObjectId to string for JSON serialization
