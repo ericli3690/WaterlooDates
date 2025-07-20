@@ -156,5 +156,6 @@ export default withPageAuthRequired(function ApplyPage({ user }: { user: any }) 
         </div>
       </div>
     </div>
+  </div>
   );
 });
