@@ -3,30 +3,45 @@
 import React, { useState } from "react";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 
+interface QuestionAndAnswer {
+  question: string;
+  answer: string;
+}
+
 export default withPageAuthRequired(function MakeWingmanPage({ user }: { user: any }) {
-  const [questions, setQuestions] = useState<string[]>([""]);
+  const [questionsAndDesiredAnswers, setQuestionsAndDesiredAnswers] = useState<QuestionAndAnswer[]>([{ question: "", answer: "" }]);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   const addQuestion = () => {
-    setQuestions([...questions, ""]);
+    setQuestionsAndDesiredAnswers([...questionsAndDesiredAnswers, { question: "", answer: "" }]);
   };
 
   const deleteQuestion = (index: number) => {
-    const newQuestions = questions.filter((_, i) => i !== index);
-    setQuestions(newQuestions);
+    const newQuestionsAndAnswers = questionsAndDesiredAnswers.filter((_, i) => i !== index);
+    setQuestionsAndDesiredAnswers(newQuestionsAndAnswers);
   };
 
   const updateQuestion = (index: number, value: string) => {
-    const newQuestions = [...questions];
-    newQuestions[index] = value;
-    setQuestions(newQuestions);
+    const newQuestionsAndAnswers = [...questionsAndDesiredAnswers];
+    newQuestionsAndAnswers[index] = { ...newQuestionsAndAnswers[index], question: value };
+    setQuestionsAndDesiredAnswers(newQuestionsAndAnswers);
+  };
+
+  const updateDesiredAnswer = (index: number, value: string) => {
+    const newQuestionsAndAnswers = [...questionsAndDesiredAnswers];
+    newQuestionsAndAnswers[index] = { ...newQuestionsAndAnswers[index], answer: value };
+    setQuestionsAndDesiredAnswers(newQuestionsAndAnswers);
   };
 
   const createWingman = async () => {
     try {
-      const validQuestions = questions.filter((q) => q.trim() !== "");
+      // Filter out empty questions
+      const validQuestionsAndAnswers = questionsAndDesiredAnswers.filter(qa => qa.question.trim() !== "");
+      
+      console.log('Questions and Desired Answers:', validQuestionsAndAnswers); // TO-DATABASE
+      console.log('User ID:', user.sub);
 
       const response = await fetch("http://127.0.0.1:5000/api/create-interview-flow", {
         method: "POST",
@@ -34,8 +49,8 @@ export default withPageAuthRequired(function MakeWingmanPage({ user }: { user: a
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          posting_id: "001",
-          questions: validQuestions,
+          user_id: user.sub,
+          questions_and_desired_answers: validQuestionsAndAnswers,
         }),
       });
 
@@ -58,20 +73,27 @@ export default withPageAuthRequired(function MakeWingmanPage({ user }: { user: a
 
   return (
     <div className="min-h-screen bg-[#664e5b] flex items-center justify-center p-4">
-      <div className="max-w-2xl w-full bg-white rounded-3xl shadow-2xl p-8 border-4 border-[#ffda23]">
+      <div className="max-w-4xl w-full bg-white rounded-3xl shadow-2xl p-8 border-4 border-[#ffda23]">
         <h1 className="text-3xl font-bold text-[#ff76e8] mb-8 text-center">
           Customize Your Wingman
         </h1>
 
         <div className="space-y-4 mb-6">
-          {questions.map((question, index) => (
+          {questionsAndDesiredAnswers.map((qa, index) => (
             <div key={index} className="flex items-center space-x-3">
               <input
                 type="text"
-                value={question}
+                value={qa.question}
                 onChange={(e) => updateQuestion(index, e.target.value)}
                 placeholder="Enter your question here..."
-                className="flex-1 px-4 py-2 border-2 border-[#ff76e8] rounded-lg focus:outline-none focus:ring-4 focus:ring-[#ff76e8]/50"
+                className="flex-1 px-4 py-2 border-2 border-[#ff76e8] text-gray-500 rounded-lg focus:outline-none focus:ring-4 focus:ring-[#ff76e8]/50"
+              />
+              <input
+                type="text"
+                value={qa.answer}
+                onChange={(e) => updateDesiredAnswer(index, e.target.value)}
+                placeholder="Looking for a particular answer?"
+                className="flex-1 px-4 py-2 border-2 border-[#ff76e8] text-gray-500 rounded-lg focus:outline-none focus:ring-4 focus:ring-[#ff76e8]/50"
               />
               <button
                 onClick={() => deleteQuestion(index)}

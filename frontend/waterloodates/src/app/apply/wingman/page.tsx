@@ -3,10 +3,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 interface WingmanPageProps {
-  flowId: string;
+  applicantUserId: string;
+  interviewerUserId: string;
 }
 
-export default function ApplyWingmanPage({ flowId }: WingmanPageProps) {
+export default function ApplyWingmanPage({ applicantUserId, interviewerUserId }: WingmanPageProps) {
   const [interviewLink, setInterviewLink] = useState<string | null>(null);
   const [showIframe, setShowIframe] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
@@ -36,12 +37,8 @@ export default function ApplyWingmanPage({ flowId }: WingmanPageProps) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          flow_id: "bfba5e51",
           applicant_user_id: "1",
-          interviewer_user_id: "2",
-          user_email: 'user@example.com', // This should be passed as a prop or retrieved from user context
-          first_name: 'John', // This should be passed as a prop or retrieved from user context
-          last_name: 'Doe' // This should be passed as a prop or retrieved from user context
+          interviewer_user_id: "2"
         }),
       });
       const data = await response.json();
