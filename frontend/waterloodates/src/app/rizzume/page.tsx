@@ -1,12 +1,17 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { UserData } from "@/interfaces/interfaces";
 
 export default withPageAuthRequired(function RizzumePage({ user }) {
   const [rizzumeCreated, setRizzumeCreated] = useState<boolean>(false);
+  const hasInitialized = useRef(false);
 
   useEffect(() => {
+    if (!user || hasInitialized.current) return;
+    
+    hasInitialized.current = true;
+    
     const fetchUser = async () => {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}create_or_get_user`, {
@@ -28,7 +33,7 @@ export default withPageAuthRequired(function RizzumePage({ user }) {
   }, [user]);
 
   return (
-    <div className="bg-[#664e5b] min-h-[calc(100vh-4rem)] flex items-center justify-center px-4">
+    <div className="bg-[#664e5b] min-h-screen flex items-center justify-center px-4">
       <div className="bg-white border border-yellow-400 rounded-2xl shadow-2xl p-10 max-w-2xl w-full text-center">
         <h1 className="text-4xl font-bold mb-4 text-[#ff76e8]">Your Rizzumé</h1>
         <p className="text-gray-700 mb-3">

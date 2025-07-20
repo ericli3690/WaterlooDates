@@ -4,13 +4,16 @@ import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { UserData } from "@/interfaces/interfaces";
 
 interface Application {
-  applicantId: string;
-  recipientId: string;
-  applicantName: string;
-  recipientName: string;
-  status: string;
-  createdAt: string;
-  applicationId: string;
+    _id: string;
+    applicant_user_id: string;
+    interviewer_user_id: string;
+    status: number;
+    interview_id: string;
+    interview_link: string;
+    audio_url: string;
+    transcript: string;
+    gemini_response: any;
+    interviewer_decision: string;
 }
 
 
@@ -145,8 +148,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                     key={idx}
                     className="p-4 bg-white text-black border border-yellow-300 rounded-xl shadow"
                   >
-                    You applied to {app.recipientName} on{" "}
-                    {new Date(app.createdAt).toLocaleDateString()}.
+                    You applied to {app.interviewer_user_id}!
                     <span className="block text-sm text-gray-600">
                       Status: {app.status}
                     </span>
@@ -163,8 +165,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
                     key={idx}
                     className="p-4 bg-white text-black border border-yellow-300 rounded-xl shadow"
                   >
-                    {app.applicantName} applied to you on{" "}
-                    {new Date(app.createdAt).toLocaleDateString()}.
+                    {app.applicant_user_id} applied to you!
                     <span className="block text-sm text-gray-600">
                       Status: {app.status}
                     </span>
