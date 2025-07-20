@@ -110,9 +110,17 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
           setUserData(data);
 
           if (data.rizzume_created) {
-            fetch(`${process.env.NEXT_PUBLIC_API_URL}applications/outgoing`)
+            fetch("http://127.0.0.1:5000/api/get_applications_for_applicant_and_update_status", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ user_id: user.sub }),
+            })
               .then((res) => res.json())
-              .then(setOutgoingApplications)
+              .then((resp) => {
+                if (resp && resp.applications) {
+                  setOutgoingApplications(resp.applications as Application[]);
+                }
+              })
               .catch(console.error);
 
             if (data.wingman_created) {
