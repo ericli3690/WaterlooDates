@@ -9,11 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth0/nextjs-auth0": "^4.8.0",
     "@cloudinary/react": "^1.14.3",
     "@cloudinary/url-gen": "^1.21.0",
+    "@fontsource/quicksand": "^5.2.8",
     "cloudinary": "^2.7.0",
-    "next": "15.4.2",
-    "@auth0/nextjs-auth0": "^4.8.0",
     "next": "15.4.2",
     "react": "19.1.0",
     "react-dom": "19.1.0"

@@ -17,7 +17,7 @@ export default function Navbar() {
     }
 
     return (
-    <nav className="bg-gray-800 text-gray-100 shadow-md">
+    <nav className="bg-[#3a2a33] text-gray-100 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -36,8 +36,8 @@ export default function Navbar() {
                   href={href}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition ${
                     isActive
-                      ? 'text-[#343434] bg-[#ff76e8]'
-                      : 'text-gray-200 hover:text-[#ff76e8] hover:bg-gray-700'
+                      ? 'text-[#664e5b] bg-[#ff76e8]'
+                      : 'text-gray-200 hover:text-[#ff76e8] hover:bg-[#33242e]'
                   }`}
                 >
                   {label}
@@ -48,7 +48,7 @@ export default function Navbar() {
             {/* Logout as a normal <a> */}
             <a
               href="/auth/logout"
-              className="px-3 py-2 rounded-md text-sm font-medium text-gray-200 hover:text-[#343434] hover:bg-[#ffda23] transition"
+              className="px-3 py-2 rounded-md text-sm font-medium text-gray-200 hover:text-[#664e5b] hover:bg-[#ffda23] transition"
             >
               Log out
             </a>
