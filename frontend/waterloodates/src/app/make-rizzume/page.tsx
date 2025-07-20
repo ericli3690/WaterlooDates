@@ -94,7 +94,7 @@ export default withPageAuthRequired(function MakeRizzumePage({ user }: { user: a
     }
 
     return (
-        <div className="min-h-screen bg-[#664e5b] flex items-center justify-center p-4">
+        <div className="min-h-screen bg-[#664e5b] flex items-center justify-center p-24">
             <div className="bg-white rounded-lg shadow-lg p-8 w-full">
                 <RizzumeForm 
                     ref={formRef} 
@@ -104,7 +104,7 @@ export default withPageAuthRequired(function MakeRizzumePage({ user }: { user: a
                 <div className="text-center pt-4 pb-8">
                     <button 
                         onClick={handleSubmitClick}
-                        className="bg-blue-600 text-white px-8 py-2 rounded font-semibold hover:bg-blue-700 transition-colors"
+                        className="bg-[#ff76e8] text-white px-8 py-2 rounded font-semibold hover:cursor-pointer hover:bg-[#ff76e8]/80 transition-colors"
                     >
                         {initialData ? 'Update Application' : 'Submit Application'}
                     </button>

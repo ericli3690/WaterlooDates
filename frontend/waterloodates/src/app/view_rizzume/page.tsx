@@ -78,12 +78,12 @@ export default withPageAuthRequired(function ViewRizzumePage({ user }) {
     const filtered = profiles.filter(profile => {
       console.log("profile", profile);
       // Filter by gender (case-insensitive)
-      if (filtersRef.current.genders.length > 0 && !filtersRef.current.genders.includes(profile.profile.gender.toLowerCase())) {
+      if (filtersRef.current.genders.length == 0 || !filtersRef.current.genders.includes(profile.profile.gender.toLowerCase())) {
         return false;
       }
       
       // Filter by sexuality (case-insensitive)
-      if (filtersRef.current.sexualities.length > 0 && !filtersRef.current.sexualities.includes(profile.profile.sexuality.toLowerCase())) {
+      if (filtersRef.current.sexualities.length == 0 || !filtersRef.current.sexualities.includes(profile.profile.sexuality.toLowerCase())) {
         return false;
       }
       
@@ -126,13 +126,13 @@ export default withPageAuthRequired(function ViewRizzumePage({ user }) {
 
   const Popup = ({ profile, onClose }: { profile: RizzumeProfile; onClose: () => void }) => (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md space-y-4">
+      <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-lg space-y-6">
         <div className="flex justify-end">
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-2xl cursor-pointer font-bold">×</button>
         </div>
-        <h2 className="text-xl text-black font-semibold text-center mb-10">
+        <Title order={2} ta="center" mb="xl">
           Apply for {profile.profile.name.first} {profile.profile.name.last}
-        </h2>
+        </Title>
         <div className="flex flex-col gap-4">
           <button
             onClick={() => {
