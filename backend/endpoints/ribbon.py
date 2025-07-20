@@ -115,7 +115,7 @@ def create_or_update_interview():
         existing_application = applications_collection.find_one({"applicant_user_id": applicant_user_id, "interviewer_user_id": interviewer_user_id})
         # print("CHECK 2")
         if not existing_application or not existing_applicant_user or not existing_interviewer_user or not existing_wingman or not existing_applicant_rizzume or not existing_interviewer_rizzume:
-            return jsonify({"success": False, "interview_link": "", "error": "create or update interview smth is cooked"}), 400
+            return jsonify({"success": False, "interview_link": "", "error": "Could not create/update interview. Please try again!"}), 400
         # print("CHECK 3")
         flow_id = existing_wingman["interview_flow_id"]
         applicant_first_name = existing_applicant_rizzume["profile"]["name"]["first"]
