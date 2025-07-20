@@ -120,10 +120,7 @@ export default withPageAuthRequired(function ViewRizzumePage({ user }) {
   };
 
   const handleStartInterview = (targetId: string) => {
-    const sourceId = user?.sub?.split('|')[1]; // Assuming Auth0 ID format
-    if (sourceId) {
-      window.location.href = `/apply/wingman?applicant_user_id=${sourceId}&interviewer_user_id=${targetId}`;
-    }
+    window.location.href = `/apply/wingman?applicant_user_id=${user.sub}&interviewer_user_id=${targetId}`;
   };
 
   const Popup = ({ profile, onClose }: { profile: RizzumeProfile; onClose: () => void }) => (
@@ -147,6 +144,7 @@ export default withPageAuthRequired(function ViewRizzumePage({ user }) {
           </button>
           <button
             onClick={() => {
+              // alert("GOOGOOGAGA" + user.sub +  profile.user_id);
               fetch(`http://127.0.0.1:5000/api/create_application`, {
                 method: 'POST',
                 headers: {

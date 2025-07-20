@@ -92,8 +92,8 @@ export default withPageAuthRequired(function ApplyPage({ user }: { user: any }) 
       console.error("User not authenticated");
       return;
     }
-
-    const applicantUserId = encodeURIComponent(user.sub);
+    console.log(user);
+    const applicantUserId = user.sub;
     const interviewerUserId = encodeURIComponent(person?.id || "");
 
     router.push(`/apply/wingman?applicant_user_id=${applicantUserId}&interviewer_user_id=${interviewerUserId}`);
