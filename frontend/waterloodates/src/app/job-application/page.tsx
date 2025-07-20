@@ -1,11 +1,14 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import RizzumeForm, { RizzumeFormRef } from '@/components/RizzumeForm'
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 
 export default withPageAuthRequired(function JobApplicationForm({ user }: { user: any }) {
     const formRef = useRef<RizzumeFormRef>(null)
+    const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+    const [showErrorDialog, setShowErrorDialog] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const handleFormSubmit = async (formData: any) => {
         try {
@@ -20,16 +23,19 @@ export default withPageAuthRequired(function JobApplicationForm({ user }: { user
             });
             
             if (res.ok) {
-                alert('Rizzumé submitted successfully!');
-                // Optionally redirect or clear form
-                window.location.reload(); // This will clear the form
+                setShowSuccessDialog(true);
+                window.location.reload();
             } else {
                 const errorData = await res.json();
-                alert(`Failed to submit rizzumé: ${errorData.message || 'Please try again.'}`);
+                setErrorMessage(errorData.message || 'Please try again.');
+                setShowErrorDialog(true);
+                setTimeout(() => setShowErrorDialog(false), 3000);
             }
         } catch (error) {
             console.error('Error submitting rizzumé:', error);
-            alert('An error occurred while submitting your rizzumé. Please check your connection and try again.');
+            setErrorMessage('An error occurred while submitting your rizzumé. Please check your connection and try again.');
+            setShowErrorDialog(true);
+            setTimeout(() => setShowErrorDialog(false), 3000);
         }
     };
 
@@ -52,6 +58,20 @@ export default withPageAuthRequired(function JobApplicationForm({ user }: { user
                     </button>
                 </div>
             </div>
+
+            {/* Success Dialog */}
+            {showSuccessDialog && (
+              <div className="fixed top-4 right-4 bg-[#dafaf1] border-2 border-[#26a69a] text-[#008066] px-4 py-3 rounded-lg shadow-lg z-50">
+                <p className="font-medium">Rizzumé submitted successfully!</p>
+              </div>
+            )}
+
+            {/* Error Dialog */}
+            {showErrorDialog && (
+              <div className="fixed top-4 right-4 bg-[#ffe6e6] border-2 border-[#e03e3e] text-[#a80000] px-4 py-3 rounded-lg shadow-lg z-50">
+                <p className="font-medium">Error: {errorMessage}</p>
+              </div>
+            )}
         </div>
     )
 });

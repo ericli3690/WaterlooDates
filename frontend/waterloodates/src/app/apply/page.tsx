@@ -22,6 +22,9 @@ export default withPageAuthRequired(function ApplyPage({ user }: { user: any }) 
   });
   const [userData, setUserData] = useState<any>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const hasInitialized = useRef(false);
 
   useEffect(() => {
@@ -55,7 +58,6 @@ export default withPageAuthRequired(function ApplyPage({ user }: { user: any }) 
 
   const handleSubmitApplication = async () => {
     if (!userData?.rizzume_created) {
-      alert("You must create your Rizzumé before applying to others!");
       router.push("/make-rizzume");
       return;
     }
@@ -76,14 +78,17 @@ export default withPageAuthRequired(function ApplyPage({ user }: { user: any }) 
       const data = await response.json();
       
       if (data.success) {
-        alert('Application submitted successfully!');
         router.push('/dashboard');
       } else {
-        alert(`Failed to submit application: ${data.error || 'Please try again.'}`);
+        setErrorMessage(data.error || 'Please try again.');
+        setShowErrorDialog(true);
+        setTimeout(() => setShowErrorDialog(false), 3000);
       }
     } catch (error) {
       console.error('Error submitting application:', error);
-      alert('An error occurred while submitting your application. Please check your connection and try again.');
+      setErrorMessage('An error occurred while submitting your application. Please check your connection and try again.');
+      setShowErrorDialog(true);
+      setTimeout(() => setShowErrorDialog(false), 3000);
     } finally {
       setSubmitting(false);
     }
@@ -155,6 +160,20 @@ export default withPageAuthRequired(function ApplyPage({ user }: { user: any }) 
           </button>
         </div>
       </div>
+
+      {/* Success Dialog */}
+      {showSuccessDialog && (
+        <div className="fixed top-4 right-4 bg-[#dafaf1] border-2 border-[#26a69a] text-[#008066] px-4 py-3 rounded-lg shadow-lg z-50">
+          <p className="font-medium">Application submitted successfully!</p>
+        </div>
+      )}
+
+      {/* Error Dialog */}
+      {showErrorDialog && (
+        <div className="fixed top-4 right-4 bg-[#ffe6e6] border-2 border-[#e03e3e] text-[#a80000] px-4 py-3 rounded-lg shadow-lg z-50">
+          <p className="font-medium">Error: {errorMessage}</p>
+        </div>
+      )}
     </div>
   </div>
   );

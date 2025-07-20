@@ -10,6 +10,9 @@ export default withPageAuthRequired(function MakeRizzumePage({ user }: { user: a
     const router = useRouter()
     const [initialData, setInitialData] = useState<any>(null)
     const [isLoading, setIsLoading] = useState(true)
+    const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+    const [showErrorDialog, setShowErrorDialog] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     // Fetch existing rizzume data on component mount
     useEffect(() => {
@@ -58,16 +61,18 @@ export default withPageAuthRequired(function MakeRizzumePage({ user }: { user: a
             });
             
             if (res.ok) {
-                alert('Rizzumé submitted successfully!');
-                // Redirect to dashboard
                 router.push('/dashboard');
             } else {
                 const errorData = await res.json();
-                alert(`Failed to submit rizzumé: ${errorData.message || 'Please try again.'}`);
+                setErrorMessage(errorData.message || 'Please try again.');
+                setShowErrorDialog(true);
+                setTimeout(() => setShowErrorDialog(false), 3000);
             }
         } catch (error) {
             console.error('Error submitting rizzumé:', error);
-            alert('An error occurred while submitting your rizzumé. Please check your connection and try again.');
+            setErrorMessage('An error occurred while submitting your rizzumé. Please check your connection and try again.');
+            setShowErrorDialog(true);
+            setTimeout(() => setShowErrorDialog(false), 3000);
         }
     };
 
@@ -105,6 +110,20 @@ export default withPageAuthRequired(function MakeRizzumePage({ user }: { user: a
                     </button>
                 </div>
             </div>
+
+            {/* Success Dialog */}
+            {showSuccessDialog && (
+              <div className="fixed top-4 right-4 bg-[#dafaf1] border-2 border-[#26a69a] text-[#008066] px-4 py-3 rounded-lg shadow-lg z-50">
+                <p className="font-medium">Rizzumé submitted successfully!</p>
+              </div>
+            )}
+
+            {/* Error Dialog */}
+            {showErrorDialog && (
+              <div className="fixed top-4 right-4 bg-[#ffe6e6] border-2 border-[#e03e3e] text-[#a80000] px-4 py-3 rounded-lg shadow-lg z-50">
+                <p className="font-medium">Error: {errorMessage}</p>
+              </div>
+            )}
         </div>
     )
 });
