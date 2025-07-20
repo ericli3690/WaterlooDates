@@ -28,7 +28,7 @@ export default withPageAuthRequired(function RizzumePage({ user }) {
   }, [user]);
 
   return (
-    <div className="min-h-screen bg-[#664e5b] flex items-center justify-center px-4">
+    <div className="bg-[#664e5b] min-h-[calc(100vh-4rem)] flex items-center justify-center px-4">
       <div className="bg-white border border-yellow-400 rounded-2xl shadow-2xl p-10 max-w-2xl w-full text-center">
         <h1 className="text-4xl font-bold mb-4 text-[#ff76e8]">Your Rizzumé</h1>
         <p className="text-gray-700 mb-3">
