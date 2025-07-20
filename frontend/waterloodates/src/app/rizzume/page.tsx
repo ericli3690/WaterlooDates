@@ -9,7 +9,7 @@ export default withPageAuthRequired(function RizzumePage({ user }) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch(path.join(process.env.NEXT_PUBLIC_API_URL as string, "create_or_get_user"), {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}create_or_get_user`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
