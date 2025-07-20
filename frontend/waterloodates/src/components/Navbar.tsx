@@ -8,7 +8,7 @@ export default function Navbar() {
 
     const navLinks = [
         { href: '/dashboard', label: 'Dashboard' },
-        { href: '/rizzume', label: 'Rizzumé' },
+        { href: '/job-application', label: 'Rizzumé' },
         { href: '/settings', label: 'Settings' },
     ];
 
