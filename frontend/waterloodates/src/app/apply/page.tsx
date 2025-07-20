@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { withPageAuthRequired, useUser } from "@auth0/nextjs-auth0";
 
 interface Posting {
   id: string;
@@ -12,6 +12,7 @@ interface Posting {
 export default withPageAuthRequired(function ApplyPage({ user }: { user: any }) {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { user } = useUser();
 
   const id = searchParams.get("id") as string;
 
@@ -101,9 +102,23 @@ export default withPageAuthRequired(function ApplyPage({ user }: { user: any }) 
     );
   }
 
+  const handleStartInterview = () => {
+    if (!user?.sub) {
+      console.error("User not authenticated");
+      return;
+    }
+
+    const applicantUserId = encodeURIComponent(user.sub);
+    const interviewerUserId = encodeURIComponent(person.id);
+
+    router.push(
+      `/apply/wingman?applicantUserId=${applicantUserId}&interviewerUserId=${interviewerUserId}`
+    );
+  };
+
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-[#5b3e4a] text-white flex flex-col items-center justify-center px-4 py-12">
-      <div className="bg-white text-[#5b3e4a] rounded-3xl shadow-xl p-10 max-w-xl w-full text-center space-y-6">
+      <div className="bg-white text-[#5b3e4a] rounded-3xl shadow-xl p-10 max-w-xl w-full text-center space-y-6 relative">
         
         {/* Back Button */}
         <button
