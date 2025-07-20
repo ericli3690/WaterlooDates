@@ -78,7 +78,7 @@ export default withPageAuthRequired(function DashboardPage({ user }) {
 
         {userData?.rizzume_created && (
           <a
-            href="/search"
+            href="/view_rizzume"
             className="absolute top-6 right-6 bg-[#ff76e8] hover:bg-[#ff90ef] text-white font-semibold py-2 px-4 rounded-full shadow-lg transition-all flex items-center group"
           >
             ❤️ Find Your Soulmate
